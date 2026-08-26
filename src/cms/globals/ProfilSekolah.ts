@@ -1,0 +1,94 @@
+// Path: src/cms/globals/ProfilSekolah.ts
+import { GlobalConfig } from 'payload';
+
+export const ProfilSekolah: GlobalConfig = {
+  slug: 'profil-sekolah',
+  label: 'Profil & Sejarah Sekolah',
+  access: {
+    read: () => true, // Semua pengunjung umum dapat membaca data ini
+  },
+  fields: [
+    {
+      name: 'sambutanKepala',
+      type: 'richText',
+      label: 'Sambutan Kepala Madrasah',
+    },
+    {
+      name: 'sejarahPanjang',
+      type: 'richText',
+      label: 'Sejarah Lengkap Madrasah',
+    },
+    // Lini Masa Sejarah (Timeline) Interaktif
+    {
+      name: 'liniMasa',
+      type: 'array',
+      label: 'Lini Masa Sejarah (Timeline)',
+      labels: {
+        singular: 'Momen Sejarah',
+        plural: 'Momen-Momen Sejarah',
+      },
+      fields: [
+        {
+          name: 'tahun',
+          type: 'text',
+          label: 'Tahun (misal: 1969)',
+          required: true,
+        },
+        {
+          name: 'judulPeristiwa',
+          type: 'text',
+          label: 'Judul Peristiwa (misal: Penegerian MTsAIN Susoh)',
+          required: true,
+        },
+        {
+          name: 'deskripsiPeristiwa',
+          type: 'textarea',
+          label: 'Deskripsi Singkat Kejadian',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'visi',
+      type: 'text',
+      label: 'Visi Madrasah',
+      required: true,
+    },
+    {
+      name: 'misi',
+      type: 'array',
+      label: 'Misi Madrasah',
+      labels: {
+        singular: 'Poin Misi',
+        plural: 'Poin-Poin Misi',
+      },
+      fields: [
+        {
+          name: 'teksMisi',
+          type: 'text',
+          label: 'Pernyataan Misi',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'tujuan',
+      type: 'array',
+      label: 'Tujuan Madrasah',
+      labels: {
+        singular: 'Poin Tujuan',
+        plural: 'Poin-Poin Tujuan',
+      },
+      fields: [
+        {
+          name: 'teksTujuan',
+          type: 'text',
+          label: 'Tujuan Kegiatan Madrasah',
+          required: true,
+        },
+      ],
+    },
+  ],
+};
+
+export default ProfilSekolah;
