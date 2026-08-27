@@ -31,7 +31,7 @@ export default function Navbar() {
         {
           label: "Sejarah Madrasah",
           href: "/profil/sejarah",
-          description: "Perjalanan historis dari M.Ts.A.I.S 1969 hingga menjadi Madrasah Inovasi.",
+          description: "Perjalanan historis hingga menjadi Madrasah Inovasi.",
           icon: <BookOpen className="w-5 h-5 text-brand-green" />,
         },
         {

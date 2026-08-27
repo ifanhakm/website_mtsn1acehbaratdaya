@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id">
+    <html lang="id" suppressHydrationWarning>
       <body className="flex min-h-screen flex-col antialiased">
         {/* Header Navigasi Global */}
         <Navbar />

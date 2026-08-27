@@ -1,0 +1,61 @@
+/* 📂 Salin kode ini ke file lokal Anda: src/app/(payload)/custom.scss */
+
+/* =========================================================================
+   SUNTIKAN LOGO BRANDING KUSTOM - MTsN 1 ACEH BARAT DAYA
+   Metode CSS/SCSS Murni (Aman dari Eror importMap & Lebih Ringan!)
+   ========================================================================= */
+
+/* 1. Sembunyikan SVG Bawaan Payload & Ganti dengan Logo Sekolah Anda */
+.logo, 
+.login__logo, 
+.nav__logo, 
+.sidebar-header__logo,
+.graphics__logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+
+  /* Sembunyikan Logo Bawaan (Monochrome SVG milik Payload) */
+  svg {
+    display: none !important;
+  }
+
+  /* Sisipkan Logo Sekolah Resmi Anda di Seluruh Bagian */
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 42px;
+    height: 42px;
+    background-image: url('/logo.jpg'); /* Mengarah otomatis ke public/logo.jpg */
+    background-size: cover;
+    background-position: center;
+    border-radius: 8px;
+    border: 2px solid #D1BB07; /* Bingkai aksen emas Kemenag */
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease;
+  }
+
+  &:hover::before {
+    transform: scale(1.05);
+  }
+}
+
+/* 2. Kustomisasi Khusus Halaman Login Admin (Tampilan Tengah & Lebih Besar) */
+.login__logo {
+  justify-content: center !important;
+  margin-bottom: 24px !important;
+
+  &::before {
+    width: 64px !important;
+    height: 64px !important;
+    border-width: 3px !important;
+  }
+}
+
+/* 3. Menambahkan Teks Identitas Sekolah di Samping Logo (Opsional & Estetik) */
+.login__brand, .sidebar-header__brand {
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  letter-spacing: 0.5px !important;
+}

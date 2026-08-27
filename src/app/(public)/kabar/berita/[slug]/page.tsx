@@ -14,7 +14,7 @@ interface RouteParams {
 }
 
 // =========================================================================
-// 🌟 SERIALIZER LEXICAL RICH TEXT UNTUK MENAMPILKAN "ISI LENGKAP" BERITA
+// SERIALIZER LEXICAL RICH TEXT UNTUK MENAMPILKAN "ISI LENGKAP" BERITA
 // =========================================================================
 function RichTextRenderer({ content }: { content: any }) {
   if (!content) return null
@@ -103,7 +103,7 @@ function RichTextRenderer({ content }: { content: any }) {
 }
 
 // =========================================================================
-// 🌟 HALAMAN DETAIL UTAMA (SERVER COMPONENT)
+// HALAMAN DETAIL UTAMA (SERVER COMPONENT)
 // =========================================================================
 export default async function DetailBeritaPage({ params }: RouteParams) {
   const { slug } = await params

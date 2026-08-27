@@ -4,7 +4,7 @@ export const Media: CollectionConfig = {
   slug: 'media',
   labels: {
     singular: 'Media',
-    plural: 'Pustaka Media (Uploads)',
+    plural: 'Pusat Media',
   },
   access: {
     read: () => true, // Gambar/dokumen bebas diakses publik lewat URL
@@ -22,17 +22,18 @@ export const Media: CollectionConfig = {
         width: 400,
         height: 300,
         position: 'centre',
+        formatOptions: { format: 'webp', options: { quality: 80 } },
       },
       {
         name: 'card',
         width: 768,
         height: 432, // Rasio 16:9 ideal untuk kartu berita
         position: 'centre',
+        formatOptions: { format: 'webp', options: { quality: 85 } },
       },
       {
         name: 'tablet',
         width: 1024,
-        // Tinggi dihilangkan agar otomatis (auto), rasio tetap terjaga
         position: 'centre',
       },
     ],

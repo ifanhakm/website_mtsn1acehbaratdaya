@@ -210,7 +210,7 @@ export default function BeritaClient({ beritaData }: BeritaClientProps) {
                 href={`/kabar/berita/${featuredBerita.slug}`}
                 className="inline-flex items-center gap-2 text-sm font-extrabold text-brand-green hover:text-brand-gold transition-colors w-fit group/btn"
               >
-                <span>Baca Selengkapnya</span>
+                Baca Selengkapnya
                 <ArrowRight className="w-4 h-4 transition-transform group-hover/btn:translate-x-1" />
               </Link>
             </div>

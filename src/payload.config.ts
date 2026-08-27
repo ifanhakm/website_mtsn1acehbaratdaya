@@ -2,6 +2,7 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
+import sharp from 'sharp'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
@@ -10,6 +11,9 @@ import { ProfilSekolah } from './cms/globals/ProfilSekolah'
 import { Berita } from './cms/collections/Berita'
 import { Media } from './cms/collections/Media'
 import { Staf } from './cms/collections/Staf'
+import { Dokumen } from './cms/collections/Dokumen'
+import { KategoriLayanan } from './cms/collections/KategoriLayanan'
+import { Galeri } from './cms/collections/Galeri'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -17,10 +21,19 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     user: 'users',
+    suppressHydrationWarning: true,
     meta: {
       titleSuffix: ' - MTsN 1 Abdya',
+      icons: [
+        {
+          rel: 'icon',
+          type: 'image/jpeg',
+          url: '/logo.jpg',   
+        },
+      ],
     },
   },
+  sharp,
   // Daftarkan koleksi data dinamis kita
   collections: [
     {
@@ -28,9 +41,12 @@ export default buildConfig({
       auth: true,
       fields: [],
     },
+    Staf,
     Berita,
     Media,
-    Staf,
+    Dokumen,
+    KategoriLayanan,
+    Galeri,
   ],
   // Daftarkan halaman global (singleton) kita
   globals: [

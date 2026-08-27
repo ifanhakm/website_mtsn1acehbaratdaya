@@ -1,4 +1,3 @@
-// Path: src/cms/globals/ProfilSekolah.ts
 import { GlobalConfig } from 'payload';
 
 export const ProfilSekolah: GlobalConfig = {
@@ -6,17 +5,20 @@ export const ProfilSekolah: GlobalConfig = {
   label: 'Profil & Sejarah Sekolah',
   access: {
     read: () => true, // Semua pengunjung umum dapat membaca data ini
+    update: ({ req: { user } }) => !!user, // Hanya admin yang login yang bisa edit
   },
   fields: [
     {
       name: 'sambutanKepala',
-      type: 'richText',
+      type: 'textarea', // 
       label: 'Sambutan Kepala Madrasah',
+      required: false,
     },
     {
       name: 'sejarahPanjang',
-      type: 'richText',
+      type: 'textarea', // 
       label: 'Sejarah Lengkap Madrasah',
+      required: false,
     },
     // Lini Masa Sejarah (Timeline) Interaktif
     {

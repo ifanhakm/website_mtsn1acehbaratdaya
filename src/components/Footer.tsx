@@ -62,6 +62,22 @@ export default function Footer() {
                   <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
                 </svg>
               </a>
+              {/* TikTok */}
+              <a
+                href="https://www.tiktok.com/@mtsn.1.abdya"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-white border border-gray-200 text-gray-500 hover:text-brand-green hover:border-brand-green/30 shadow-xs hover:shadow-md transition-all duration-300"
+                aria-label="TikTok MTsN 1 Abdya"
+              >
+                <svg
+                  className="w-4 h-4 fill-current"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.02 1.59 4.23.94 1.18 2.27 2 3.75 2.37V10.2c-1.85-.01-3.67-.62-5.18-1.74-.03 2.1-.01 4.19-.02 6.29-.07 1.83-.67 3.65-1.79 5.08-1.57 2-4.04 3.19-6.58 3.16-2.54-.03-4.94-1.28-6.39-3.37C-1.12 16.03-1 12.02 1.94 9.69c1.67-1.32 3.84-1.92 5.99-1.63V11.8c-1.33-.21-2.73.13-3.75 1.05-.98.88-1.48 2.22-1.33 3.51.15 1.3 1 2.45 2.19 2.97 1.25.55 2.76.43 3.89-.31.86-.57 1.39-1.51 1.48-2.54.06-4.52.02-9.04.04-13.56.1-.21.09-.45.09-.67-.01-.08-.01-.16-.01-.25z" />
+                </svg>
+              </a>
               {/* Youtube */}
               <a
                 href="https://www.youtube.com/@mtsn1acehbaratdaya364"

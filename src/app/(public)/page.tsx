@@ -1,5 +1,7 @@
-import React from 'react';
-import Link from 'next/link';
+import React from 'react'
+import Link from 'next/link'
+import { getPayload } from 'payload'
+import config from '@/payload.config'
 import { 
   ArrowRight, 
   BookOpen, 
@@ -10,47 +12,57 @@ import {
   Heart, 
   Cpu, 
   Leaf,
-  FileText,
-  PhoneCall,
   ExternalLink
-} from 'lucide-react';
+} from 'lucide-react'
+import { User } from "lucide-react";
 
-export default function HomePage() {
-  // Mock Data untuk Berita Terbaru (Nanti akan di-fetch dari Payload CMS)
-  const latestNews = [
-    {
-      id: 1,
-      title: "MTsN 1 Aceh Barat Daya Dinobatkan Sebagai Madrasah Inovasi Tingkat Provinsi",
-      excerpt: "Penghargaan bergengsi ini diraih berkat konsistensi madrasah dalam mengembangkan sistem pembelajaran berbasis digital dan program keagamaan unggulan.",
-      category: "Prestasi",
-      date: "24 Agustus 2026",
-      image: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&q=80&w=600",
-    },
-    {
-      id: 2,
-      title: "Sosialisasi Pembiasaan Karakter Islami dan Launching Program Tahfidz Qur'an",
-      excerpt: "Guna mencetak generasi qur'ani, MTsN 1 Abdya meluncurkan program akselerasi hafalan juz 30 bagi seluruh siswa baru tahun ajaran ini.",
-      category: "Info Sekolah",
-      date: "18 Agustus 2026",
-      image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80&w=600",
-    },
-    {
-      id: 3,
-      title: "Gerakan Madrasah Ramah Anak & Penanaman 100 Pohon di Lingkungan Sekolah",
-      excerpt: "Mendukung visi wawasan wiyata mandala, komite madrasah bersama siswa melakukan penataan taman hijau dan pencanangan zero-plastic zone.",
-      category: "Lingkungan",
-      date: "12 Agustus 2026",
-      image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=600",
-    }
-  ];
+// Fungsi Pembantu: Format Tanggal ke Bahasa Indonesia
+const formatTanggalIndo = (dateStr: string) => {
+  try {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
+    return new Date(dateStr).toLocaleDateString('id-ID', options)
+  } catch {
+    return dateStr
+  }
+}
 
-  // Statistik Sekolah
+// Fungsi Pembantu: Mengambil URL Gambar dari Payload Media
+const getImageUrl = (imageField: any): string => {
+  if (!imageField) return '/logo.jpg' // Fallback ke logo jika tidak ada gambar
+  if (typeof imageField === 'object' && imageField.url) {
+    return imageField.url
+  }
+  return '/logo.jpg'
+}
+
+export default async function HomePage() {
+  // 1. Inisialisasi Payload Instance di Server Side
+  const payload = await getPayload({ config })
+
+  // 2. Tarik 3 Berita Terbaru yang berstatus 'published' dari Supabase
+  const result = await payload.find({
+    collection: 'berita',
+    where: {
+      status: {
+        equals: 'published',
+      },
+    },
+    sort: '-date', // Urutkan dari berita terbaru
+    limit: 3,      // Batasi hanya 3 berita untuk preview di beranda
+    depth: 1,      // Ambil relasi media/gambar utuh
+  })
+
+  const latestNews = result.docs
+
+  // Statistik Sekolah (Statis)
   const stats = [
     { id: 1, value: "520+", label: "Siswa Aktif", icon: Users },
     { id: 2, value: "45+", label: "Guru & Tenaga Pendidik", icon: GraduationCap },
     { id: 3, value: "18", label: "Rombongan Belajar", icon: BookOpen },
     { id: 4, value: "A (Unggul)", label: "Akreditasi Ban-SM", icon: Award },
-  ];
+  ]
+
+  const kepsekFotoUrl = null; 
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -77,7 +89,7 @@ export default function HomePage() {
               </h1>
               
               <p className="text-lg text-gray-600 max-w-2xl mx-auto lg:mx-0">
-                Selamat Datang di Website Resmi <b>MTsN 1 Aceh Barat Daya</b>. Lembaga pendidikan Islam tertua di Abdya yang berkomitmen memadukan kekuatan spiritualitas, keilmuan modern, dan kesadaran lingkungan.
+                Selamat Datang di Website Resmi <strong>MTsN 1 Aceh Barat Daya</strong>. Lembaga pendidikan Islam tertua di Abdya yang berkomitmen memadukan kekuatan spiritualitas, keilmuan modern, dan kesadaran lingkungan.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
@@ -99,11 +111,9 @@ export default function HomePage() {
 
             {/* Sisi Kanan: Foto/Visual */}
             <div className="lg:col-span-5 relative mt-8 lg:mt-0">
-              {/* Bingkai Foto Elegan */}
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="absolute -inset-1.5 bg-gradient-to-tr from-brand-gold to-brand-green rounded-2xl blur opacity-30 -z-10" />
                 <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-gray-100 border border-gray-100 shadow-2xl">
-                  {/* Ganti src dengan aset lokal saat sudah tersedia di folder public */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800" 
@@ -157,15 +167,18 @@ export default function HomePage() {
       {/* =========================================================================
           3. SAMBUTAN KEPALA MADRASAH
           ========================================================================= */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      <section className="py-16 md:py-20 bg-white">
+        {/* 1. max-w-5xl + mx-auto: Mengunci seluruh grup agar selalu presisi di tengah halaman */}
+        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
+          
+          {/* 2. md:grid-cols-12: Memaksa layout berdampingan sejak layar ukuran tablet (md) */}
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
             
-            {/* Foto Kepala Sekolah */}
-            <div className="lg:col-span-5 flex justify-center">
-              <div className="relative max-w-xs sm:max-w-sm">
+            {/* Foto Kepala Sekolah (Menduduki 5 Kolom, merapat manis ke arah tengah) */}
+            <div className="md:col-span-5 flex justify-center md:justify-end">
+              <div className="relative w-full max-w-[260px] sm:max-w-xs">
                 <div className="absolute -inset-1 bg-brand-green/20 rounded-2xl -rotate-3 transform -z-10" />
-                <div className="aspect-3/4 overflow-hidden rounded-2xl border-4 border-white shadow-xl bg-gray-100">
+                <div className="aspect-[3/4] overflow-hidden rounded-2xl border-4 border-white shadow-xl bg-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
                     src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600" 
@@ -180,23 +193,26 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Isi Sambutan */}
-            <div className="lg:col-span-7 space-y-6">
-              <span className="text-sm font-bold tracking-wider text-brand-green uppercase">
-                Kata Sambutan
-              </span>
-              <h2 className="text-3xl font-bold text-gray-900 tracking-tight">
-                Membuka Gerbang Informasi Madrasah Era Digital
-              </h2>
-              <div className="text-gray-600 space-y-4 leading-relaxed">
+            {/* Isi Sambutan (Menduduki 7 Kolom, berdampingan rapi sejak layar tablet) */}
+            <div className="md:col-span-7 space-y-5 text-left flex flex-col justify-center">
+              <div>
+                <span className="inline-flex text-xs font-bold tracking-wider text-brand-green uppercase bg-brand-green/5 px-3 py-1 rounded-full">
+                  Kata Sambutan
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mt-3">
+                  Membuka Gerbang Informasi Madrasah Era Digital
+                </h2>
+              </div>
+              
+              <div className="text-gray-600 space-y-3.5 leading-relaxed text-sm sm:text-base font-semibold">
                 <p>
                   Assalamu’alaikum Warahmatullahi Wabarakatuh.
                 </p>
                 <p>
-                  Segala puji bagi Allah SWT, yang telah memberikan kita kekuatan untuk terus berinovasi dalam mengabdi di dunia pendidikan Islam. Selamat datang di portal resmi <b>MTsN 1 Aceh Barat Daya</b>. Website ini dirancang sebagai media informasi transparan, interaktif, dan modern bagi seluruh siswa, wali murid, alumni, dan publik.
+                  Segala puji bagi Allah SWT, yang telah memberikan kita kekuatan untuk terus berinovasi dalam mengabdi di dunia pendidikan Islam. Selamat datang di portal resmi <strong>MTsN 1 Aceh Barat Daya</strong>. Website ini dirancang sebagai media informasi transparan, interaktif, dan modern bagi seluruh siswa, wali murid, alumni, dan publik.
                 </p>
                 <p>
-                  Sebagai salah satu <b>Madrasah Inovasi</b> di Provinsi Aceh, kami percaya bahwa pendidikan unggul harus menyatukan nilai-nilai keagamaan (Imtaq) dengan penguasaan teknologi informasi (Iptek), tanpa melupakan kepedulian sosial dan pelestarian lingkungan hidup. Semoga portal ini memberikan manfaat maksimal untuk kita semua.
+                  Sebagai salah satu <strong>Madrasah Inovasi</strong> di Provinsi Aceh, kami percaya bahwa pendidikan unggul harus menyatukan nilai-nilai keagamaan (Imtaq) dengan penguasaan teknologi informasi (Iptek). Semoga portal ini memberikan manfaat maksimal untuk kita semua.
                 </p>
                 <p>
                   Wassalamu’alaikum Warahmatullahi Wabarakatuh.
@@ -265,7 +281,7 @@ export default function HomePage() {
       </section>
 
       {/* =========================================================================
-          5. SEKSI BERITA TERBARU
+          5. SEKSI BERITA TERBARU (DYNAMIC PREVIEW)
           ========================================================================= */}
       <section className="py-20 bg-white">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -287,46 +303,52 @@ export default function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {latestNews.map((news) => (
-              <article key={news.id} className="bg-white rounded-2xl border border-gray-150 overflow-hidden shadow-sm flex flex-col hover:shadow-md transition-shadow group">
-                <div className="relative aspect-video bg-gray-100 overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={news.image} 
-                    alt={news.title} 
-                    className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-brand-green border border-gray-100">
-                    {news.category}
-                  </span>
-                </div>
-                <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <div className="flex items-center text-xs text-gray-400 gap-1.5">
-                      <Calendar className="w-3.5 h-3.5" />
-                      {news.date}
-                    </div>
-                    <h3 className="font-bold text-lg text-gray-900 group-hover:text-brand-green transition-colors leading-snug">
-                      <Link href={`/kabar/berita/post-${news.id}`}>
-                        {news.title}
-                      </Link>
-                    </h3>
-                    <p className="text-sm text-gray-500 line-clamp-3">
-                      {news.excerpt}
-                    </p>
+          {latestNews.length === 0 ? (
+            <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-100 p-6">
+              <p className="text-gray-400 font-semibold text-sm">Belum ada berita yang diterbitkan.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {latestNews.map((news: any) => (
+                <article key={news.id} className="bg-white rounded-2xl border border-gray-150 overflow-hidden shadow-sm flex flex-col hover:shadow-md transition-shadow group">
+                  <div className="relative aspect-video bg-gray-100 overflow-hidden">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img 
+                      src={getImageUrl(news.image)} 
+                      alt={news.title} 
+                      className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-brand-green border border-gray-100">
+                      {news.category}
+                    </span>
                   </div>
-                  <Link 
-                    href={`/kabar/berita/post-${news.id}`} 
-                    className="inline-flex items-center text-sm font-semibold text-brand-green group-hover:text-brand-green-light pt-2 gap-1"
-                  >
-                    Baca Selengkapnya
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </article>
-            ))}
-          </div>
+                  <div className="p-6 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center text-xs text-gray-400 gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        {formatTanggalIndo(news.date)}
+                      </div>
+                      <h3 className="font-bold text-lg text-gray-900 group-hover:text-brand-green transition-colors leading-snug">
+                        <Link href={`/kabar/berita/${news.slug}`}>
+                          {news.title}
+                        </Link>
+                      </h3>
+                      <p className="text-sm text-gray-500 line-clamp-3">
+                        {news.excerpt}
+                      </p>
+                    </div>
+                    <Link 
+                      href={`/kabar/berita/${news.slug}`} 
+                      className="inline-flex items-center text-sm font-semibold text-brand-green group-hover:text-brand-green-light pt-2 gap-1"
+                    >
+                      Baca Selengkapnya
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -371,5 +393,5 @@ export default function HomePage() {
       </section>
 
     </div>
-  );
+  )
 }

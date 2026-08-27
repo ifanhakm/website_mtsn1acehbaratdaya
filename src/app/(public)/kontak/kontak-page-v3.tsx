@@ -15,7 +15,7 @@ import {
   MessageSquare,
   AlertCircle
 } from "lucide-react";
-import { sendContactEmail } from "./actions"; // 👈 Impor Server Action Resend baru kita!
+import { sendContactEmail } from "./actions"; // Impor Server Action Resend dinamis kita
 
 // Tipe untuk Formulir Kontak
 interface ContactForm {
@@ -34,17 +34,17 @@ interface FAQItem {
 
 export default function KontakPage() {
   // State untuk Formulir
-  const [form, setForm] = useState<ContactForm>(({
+  const [form, setForm] = useState<ContactForm>({
     nama: "",
     email: "",
     kategori: "Wali Murid",
     subjek: "",
     pesan: "",
-  }));
+  });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null); // 👈 State penampung eror pengiriman
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State penampung eror pengiriman
 
   // State untuk Akordion FAQ
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -73,7 +73,7 @@ export default function KontakPage() {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // 🌟 PENGIRIMAN DATA MENGGUNAKAN SERVER ACTION RESEND
+  // PENGIRIMAN DATA MENGGUNAKAN SERVER ACTION RESEND
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -170,9 +170,9 @@ export default function KontakPage() {
                     Jl. Pendidikan No. 56, Desa Pantai Perak, Kecamatan Susoh, Kabupaten Aceh Barat Daya, Provinsi Aceh (Kode Pos: 23765)
                   </p>
                   <a 
-                    href="https://maps.app.goo.gl/eUbW4UMju2G4kHfj6" 
+                    href="https://www.google.com/maps/search/?api=1&query=3.727974,96.823325" 
                     target="_blank" 
-                    rel="noreferrer" 
+                    rel="noopener noreferrer" 
                     className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-gold hover:text-brand-green transition-colors mt-1.5"
                   >
                     <span>Buka Google Maps</span>
@@ -203,9 +203,9 @@ export default function KontakPage() {
                   <Mail className="w-5 h-5" />
                 </div>
                 <div className="flex flex-col gap-1">
-                  <h4 className="text-sm font-extrabold text-gray-800">Email</h4>
+                  <h4 className="text-sm font-extrabold text-gray-800">Surat Elektronik (Email)</h4>
                   <p className="text-xs text-gray-500 leading-relaxed font-semibold break-all">
-                    mtsn1acehbaratdaya@gmail.com
+                    mtsn1abdya@kemenag.go.id
                   </p>
                   <span className="text-[10px] text-gray-400 font-bold">
                     Gunakan email untuk persuratan formal kedinasan.
@@ -221,7 +221,10 @@ export default function KontakPage() {
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-extrabold text-gray-800">Waktu Pelayanan</h4>
                   <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                    Senin - Jumat: 08.00 - 16.00 WIB
+                    Senin - Kamis: 08.00 - 15.00 WIB
+                  </p>
+                  <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                    Jumat: 08.00 - 11.30 WIB
                   </p>
                   <span className="text-[10px] text-brand-green font-bold mt-1">
                     *Sabtu, Minggu & Hari Libur Nasional Tutup.
@@ -437,8 +440,8 @@ export default function KontakPage() {
                     }`}
                   >
                     <div className="p-5 text-sm text-gray-600 leading-relaxed font-semibold">
-                      {faq.answer}
-                    </div>
+                      {faq.answer
+                    }</div>
                   </div>
                 </div>
               );
@@ -448,23 +451,23 @@ export default function KontakPage() {
         </div>
       </div>
 
-      {/* 4. MAPS EMPOWERMENT SECTION */}
+      {/* 4. MAPS EMPOWERMENT SECTION (Google Maps Resmi MTsN 1 Aceh Barat Daya) */}
       <div className="bg-gray-50/50 py-16 border-t border-gray-100">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
           <h3 className="text-xl font-extrabold text-brand-green">Lokasi Geografis Madrasah</h3>
           <p className="text-sm text-gray-500 max-w-md mx-auto mt-1 mb-8">
-            Peta lokasi MTsN 1 Aceh Barat Daya untuk mempermudah navigasi perjalanan.
+            Berikut peta lokasi fisik gedung MTsN 1 Aceh Barat Daya untuk mempermudah navigasi perjalanan Anda.
           </p>
           
-          {/* Iframe Maps Wrapper */}
+          {/* Iframe Maps Wrapper Resmi */}
           <div className="w-full max-w-4xl mx-auto h-96 rounded-3xl overflow-hidden border border-gray-200 shadow-md bg-white p-2">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1990.6882038420117!2d96.8223238!3d3.7278472!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x303961efedbcebd1%3A0x82c3df9a3c136a20!2sMTsN%20Unggul%20Susoh!5e0!3m2!1sid!2sid!4v1787846784146!5m2!1sid!2sid" 
+              src="https://maps.google.com/maps?q=3.727974,96.823325&z=17&output=embed" 
               className="w-full h-full rounded-2xl border-0"
               allowFullScreen={true}
               loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              title="Peta Lokasi Resmi MTsN 1 Aceh Barat Daya"
+              referrerPolicy="no-referrer-when-downgrade"
+              title="Peta Lokasi MTsN 1 Aceh Barat Daya"
             />
           </div>
         </div>
