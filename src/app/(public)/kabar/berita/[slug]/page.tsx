@@ -217,7 +217,6 @@ export default async function DetailBeritaPage({ params }: RouteParams) {
 
           {/* Ringkasan Berita (Excerpt Bar) */}
           <div className="border-l-4 border-brand-green bg-brand-green/5 px-6 py-4 rounded-r-xl mb-8">
-            <h4 className="text-xs font-extrabold text-brand-green uppercase tracking-wider mb-1">Ringkasan Berita</h4>
             <p className="text-sm sm:text-base font-bold text-gray-700 leading-relaxed italic">{berita.excerpt}</p>
           </div>
 

@@ -1,26 +1,24 @@
-// Path: src/app/(public)/profilstaf/StafClient.tsx
+// Path: src/app/(public)/profil/staf/StafClient.tsx
 "use client"
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Search, Users, GraduationCap, Briefcase, Mail, ChevronRight, User } from 'lucide-react'
+import { Search, Users, GraduationCap, Briefcase, ChevronRight, User } from 'lucide-react'
 
-export interface Media {
-  id: string;
-  url: string;
-  alt?: string;
-}
-
+// Definisikan tipe data StaffMember yang disesuaikan secara 100% presisi dengan skema Staf.ts
 export interface StaffMember {
-  id: string;
-  namaLengkap: string;
-  jabatan: string;
-  jenisPtk: 'guru' | 'staf';
-  foto: string | Media; 
-  urutan: number;
-  nip?: string;
-} 
+  id: string
+  namaLengkap: string
+  nip?: string | null
+  jabatan: string
+  jenisPtk: 'guru' | 'staf'
+  foto: {
+    url?: string | null
+    alt?: string | null
+  } | string | null
+  urutan: number
+}
 
 export default function DirektoriStafClient({ staffData }: { staffData: StaffMember[] }) {
   // State untuk Filter Kategori & Pencarian
@@ -42,7 +40,7 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
       if (member.id === kepalaMadrasah?.id) return false
 
       const matchesTab = activeTab === 'semua' || member.jenisPtk === activeTab
-
+      
       const matchesSearch =
         member.namaLengkap.toLowerCase().includes(searchQuery.toLowerCase()) ||
         member.jabatan.toLowerCase().includes(searchQuery.toLowerCase())
@@ -79,7 +77,7 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
               <span className="text-brand-gold">& Tenaga Kependidikan</span>
             </h1>
             <p className="mt-4 text-base sm:text-lg text-gray-200 leading-relaxed font-medium">
-              Kenali lebih dekat jajaran pimpinan, dewan guru pengajar, dan staf tata usaha profesional
+              Kenali lebih dekat jajaran pimpinan, dewan guru pengajar, dan staf tata usaha profesional 
               yang berdedikasi tinggi membimbing putra-putri berprestasi di MTsN 1 Aceh Barat Daya.
             </p>
           </div>
@@ -87,51 +85,57 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
       </div>
 
       {/* ==========================================
-         2. KEPALA MADRASAH SPOTLIGHT
+         2. KEPALA MADRASAH SPOTLIGHT (PORTRAIT 3:4)
          ========================================== */}
       {kepalaMadrasah && (
-        <div className="mx-auto max-w-7xl px-4 -mt-10 sm:px-6 lg:px-8 relative z-20">
+        <div className="mx-auto max-w-5xl px-4 -mt-10 sm:px-6 lg:px-8 relative z-20">
           <div className="overflow-hidden rounded-3xl bg-white border border-gray-100 shadow-xl">
-            <div className="grid grid-cols-1 md:grid-cols-12">
-
-              {/* Foto Kepala Madrasah */}
-              <div className="md:col-span-4 bg-gray-100 flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
-                <div className="relative overflow-hidden flex h-56 w-56 items-center justify-center rounded-2xl bg-brand-green/10 border-4 border-brand-green/10 text-brand-green shadow-inner">
+            <div className="grid grid-cols-1 md:grid-cols-12 items-center">
+              
+              {/* Foto Kepala Madrasah - DISET KE 3:4 PORTRAIT DENGAN OBJECT-TOP */}
+              <div className="md:col-span-5 bg-gray-50 flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
+                <div className="relative overflow-hidden flex aspect-[3/4] w-full max-w-[240px] items-center justify-center rounded-2xl bg-brand-green/10 border-4 border-white shadow-lg text-brand-green">
                   {kepalaMadrasah.foto && typeof kepalaMadrasah.foto === 'object' && kepalaMadrasah.foto.url ? (
                     <Image
                       src={kepalaMadrasah.foto.url}
                       alt={kepalaMadrasah.foto.alt || kepalaMadrasah.namaLengkap}
                       fill
-                      className="object-cover"
+                      priority
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className="object-cover object-top"
                     />
                   ) : (
-                    <User className="w-24 h-24 stroke-[1.2]" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-gray-400">
+                      <User className="w-20 h-20 stroke-[1.2] mb-2 text-brand-green" />
+                      <span className="text-xs font-bold uppercase tracking-wider text-brand-gold">Foto Kosong</span>
+                    </div>
                   )}
                 </div>
               </div>
 
               {/* Sambutan & Detail */}
-              <div className="md:col-span-8 p-8 sm:p-10 flex flex-col justify-center">
+              <div className="md:col-span-7 p-8 sm:p-10 flex flex-col justify-center">
                 <span className="inline-block text-[10px] font-extrabold uppercase tracking-widest text-brand-gold bg-brand-gold/10 px-3 py-1 rounded-full w-fit mb-4">
                   Pimpinan Madrasah
                 </span>
                 <h2 className="text-2xl font-extrabold text-brand-green tracking-tight sm:text-3xl">
                   {kepalaMadrasah.namaLengkap}
                 </h2>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mt-1">
+                <p className="text-sm font-bold text-gray-400 uppercase tracking-wide mt-1">
                   {kepalaMadrasah.jabatan}
                 </p>
-
+                
                 {kepalaMadrasah.nip && (
                   <p className="text-xs font-semibold text-gray-500 mt-1">
                     NIP. {kepalaMadrasah.nip}
                   </p>
                 )}
-
+                
                 <div className="mt-5 border-t border-gray-100 pt-5">
-                  <p className="text-sm text-gray-500 leading-relaxed font-medium italic">
-                    Selamat datang di Direktori Resmi MTsN 1 Aceh Barat Daya. Kami percaya bahwa kolaborasi
-                    yang kuat antara tenaga pendidik yang kompeten, staf administrasi yang berintegritas,                    serta dukungan penuh dari orang tua murid adalah kunci utama dalam mencetak generasi emas
+                  <p className="text-sm text-gray-500 leading-relaxed font-semibold italic">
+                    Selamat datang di Direktori Resmi MTsN 1 Aceh Barat Daya. Kami percaya bahwa kolaborasi 
+                    yang kuat antara tenaga pendidik yang kompeten, staf administrasi yang berintegritas, 
+                    serta dukungan penuh dari orang tua murid adalah kunci utama dalam mencetak generasi emas 
                     yang cerdas spiritual, unggul intelektual, dan berwawasan lingkungan.
                   </p>
                 </div>
@@ -145,9 +149,9 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
       {/* ==========================================
          3. UTILITY BAR: PENCARIAN & FILTER TAB
          ========================================== */}
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 border-b border-gray-200 pb-8">
-
+          
           {/* Kiri: Filter Tabs */}
           <div className="flex flex-wrap gap-2">
             <button
@@ -159,9 +163,9 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
               }`}
             >
               <Users className="w-4 h-4" />
-              <span>Semua Personel ({staffData.length})</span>
+              <span>Semua ({staffData.length})</span>
             </button>
-
+            
             <button
               onClick={() => setActiveTab('guru')}
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 ${
@@ -171,9 +175,9 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
               }`}
             >
               <GraduationCap className="w-4 h-4" />
-              <span>Tenaga Pendidik / Guru</span>
+              <span>Pendidik / Guru</span>
             </button>
-
+            
             <button
               onClick={() => setActiveTab('staf')}
               className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-wide transition-all duration-300 ${
@@ -183,7 +187,7 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
               }`}
             >
               <Briefcase className="w-4 h-4" />
-              <span>Tenaga Kependidikan / Staf TU</span>
+              <span>Tenaga Kependidikan / Staf</span>
             </button>
           </div>
 
@@ -195,51 +199,56 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
               placeholder="Cari guru atau staf..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 text-xs font-semibold rounded-full text-gray-700 placeholder-gray-400 focus:outline-hidden focus:border-brand-green/50 focus:ring-4 focus:ring-brand-green/5 transition-all duration-300"
+              className="w-full bg-white border border-gray-200 pl-11 pr-4 py-3 text-xs font-semibold rounded-full text-gray-700 placeholder-gray-400 focus:outline-none focus:border-brand-green/50 focus:ring-4 focus:ring-brand-green/5 transition-all duration-300"
             />
           </div>
 
         </div>
 
         {/* ==========================================
-           4. GRID LIST PERSONEL (GURU & STAF)
+           4. GRID LIST PERSONEL (GURU & STAF - PORTRAIT 3:4)
            ========================================== */}
         {filteredStaff.length > 0 ? (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mt-10">
             {filteredStaff.map((member) => (
               <div
                 key={member.id}
-                className="group relative bg-white border border-gray-100 rounded-3xl p-6 shadow-xs hover:shadow-xl hover:border-brand-green/20 transition-all duration-300 flex flex-col justify-between"
+                className="group relative bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:border-brand-green/20 transition-all duration-300 flex flex-col h-full justify-between"
               >
-                {/* Atas: Foto & Info Utama */}
-                <div className="flex items-center gap-5">
-                  {/* Foto Profil Lingkaran dengan Fallback Lucide Icon */}
-                  <div className="relative overflow-hidden flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-brand-green/5 border border-brand-green/10 text-brand-green shadow-xs group-hover:scale-105 transition-transform duration-300">
-                    {member.foto && typeof member.foto === 'object' && member.foto.url ? (
-                      <Image
-                        src={member.foto.url}
-                        alt={member.foto.alt || member.namaLengkap}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <User className="w-8 h-8 stroke-[1.2]" />
-                    )}
-                  </div>
+                {/* 1. Bagian Atas: Foto Portrait 3:4 dengan 'object-top' agar kepala tidak terpotong */}
+                <div className="relative aspect-[3/4] w-full bg-gray-50 overflow-hidden">
+                  {member.foto && typeof member.foto === 'object' && member.foto.url ? (
+                    <Image
+                      src={member.foto.url}
+                      alt={member.foto.alt || member.namaLengkap}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-gray-400">
+                      <User className="w-16 h-16 stroke-[1.2] mb-2 text-brand-green/25" />
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Foto Kosong</span>
+                    </div>
+                  )}
 
-                  {/* Identitas */}
-                  <div className="flex flex-col">
-                    <span className="inline-block text-[9px] font-extrabold uppercase tracking-wider text-brand-gold bg-brand-gold/10 px-2 py-0.5 rounded-full w-fit mb-1.5">
-                      {member.jenisPtk === 'guru' ? 'Guru / Pendidik' : 'Tata Usaha / Staf'}
-                    </span>
+                  {/* Tag Kategori Kepegawaian di Atas Foto */}
+                  <span className="absolute top-4 right-4 inline-block text-[9px] font-extrabold uppercase tracking-wider text-brand-green bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full shadow-xs border border-gray-100/30">
+                    {member.jenisPtk === 'guru' ? 'Guru' : 'Staf TU'}
+                  </span>
+                </div>
+
+                {/* 2. Bagian Bawah: Informasi Identitas */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div className="space-y-1.5">
                     <h3 className="font-extrabold text-gray-800 leading-snug group-hover:text-brand-green transition-colors duration-300">
                       {member.namaLengkap}
                     </h3>
-                    <p className="text-xs text-gray-400 font-bold mt-0.5">
+                    <p className="text-xs text-gray-400 font-bold">
                       {member.jabatan}
                     </p>
                     {member.nip && (
-                      <p className="text-[10px] text-gray-400 font-medium mt-0.5">
+                      <p className="text-[10px] text-gray-500 font-semibold bg-gray-50 border border-gray-100/40 px-2 py-0.5 rounded w-fit">
                         NIP. {member.nip}
                       </p>
                     )}
@@ -253,7 +262,8 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
           /* State Kosong (Search tidak ditemukan) */
           <div className="text-center py-20 mt-10 bg-white rounded-3xl border border-dashed border-gray-200">
             <Users className="w-12 h-12 text-gray-300 mx-auto mb-4 stroke-[1.2]" />
-            <h3 className="text-lg font-bold text-gray-700">Tidak ada personel ditemukan</h3>\n            <p className="text-sm text-gray-400 max-w-xs mx-auto mt-1 font-medium">
+            <h3 className="text-lg font-bold text-gray-700">Tidak ada personel ditemukan</h3>
+            <p className="text-sm text-gray-400 max-w-xs mx-auto mt-1 font-medium">
               Tidak ada hasil untuk kata kunci "{searchQuery}" pada kategori tab yang Anda pilih.
             </p>
           </div>

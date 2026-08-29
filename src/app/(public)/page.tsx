@@ -62,7 +62,7 @@ export default async function HomePage() {
     { id: 4, value: "A (Unggul)", label: "Akreditasi Ban-SM", icon: Award },
   ]
 
-  const kepsekFotoUrl = null; 
+  const kepsekFotoUrl = "/media/kepsek-1024x1536.jpg";
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -116,7 +116,7 @@ export default async function HomePage() {
                 <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-gray-100 border border-gray-100 shadow-2xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
-                    src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=800" 
+                    src="fotogedung.png" 
                     alt="Gedung MTsN 1 Aceh Barat Daya" 
                     className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500"
                   />
@@ -181,7 +181,7 @@ export default async function HomePage() {
                 <div className="aspect-[3/4] overflow-hidden rounded-2xl border-4 border-white shadow-xl bg-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
-                    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600" 
+                    src={kepsekFotoUrl} 
                     alt="Kepala Madrasah MTsN 1 Abdya" 
                     className="object-cover w-full h-full"
                   />

@@ -38,7 +38,7 @@ const defaultDocuments: DocumentItem[] = [
     fileSize: "28 KB",
     fileType: "DOCX",
     fileName: "Blangko Surat Keterangan Aktif Siswa.docx",
-    badge: "Siswa Aktif",
+    badge: "",
   },
   {
     id: "pengganti-ijazah",

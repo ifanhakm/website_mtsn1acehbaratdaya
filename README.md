@@ -1,185 +1,177 @@
-# Website Resmi MTsN 1 Aceh Barat Daya 🏫✨
+# 🕌 Website Resmi MTsN 1 Aceh Barat Daya
 
-> **Referensi Pengembangan:** [MTs Negeri 5 Sleman](https://mtsn5sleman.sch.id/) — Versi lebih bersih (*clean*), modern, cepat, dan berkinerja tinggi (*high performance*).
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.x_Stable-000000?style=for-the-badge&logo=payload)](https://payloadcms.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-316192?style=for-the-badge&logo=postgresql)](https://supabase.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
-Repository ini berisi kode sumber (*source code*) untuk **Website Resmi Madrasah Tsanawiyah Negeri (MTsN) 1 Aceh Barat Daya**, sebuah institusi pendidikan Islam unggul yang beralamat di Jl. Pendidikan No. 56, Desa Pantai Perak, Kecamatan Susoh, Kabupaten Aceh Barat Daya, Provinsi Aceh. 
+Repositon Resmi pengembangan website **Madrasah Tsanawiyah Negeri 1 Aceh Barat Daya** (MTsN 1 Abdya), salah satu **Madrasah Inovasi** terkemuka di Provinsi Aceh. Proyek ini dibangun ulang dengan arsitektur modern berorientasi masa depan yang bersih, sangat cepat, responsif mobile-first, serta ramah tata kelola bagi tim Humas dan Tata Usaha sekolah.
 
-Proyek ini dibangun menggunakan **Next.js 15 (App Router)** dan **Payload CMS 3.x** sebagai sistem manajemen konten terpadu yang menyederhanakan arsitektur web sekolah lama menjadi solusi *headless* modern yang sepenuhnya *serverless-ish*.
-
----
-
-## 🚀 Fitur Utama & Penyempurnaan dari Referensi
-
-Situs referensi (MTsN 5 Sleman) disempurnakan secara radikal dengan prinsip-prinsip berikut:
-1. **Navigasi Maksimal 2 Level:** Mengeliminasi mega-menu bersarang hingga 4 level yang membingungkan pengguna mobile. Seluruh tautan dinavigasikan secara ringkas.
-2. **Portal Layanan Terpadu (Card-Based):** Mengelompokkan semua tautan sistem eksternal (Google Classroom, RDM, Absensi GPS, EMIS, Pusaka Kemenag, dll.) ke dalam satu halaman interaktif berbasis kartu (*card layout*) yang terbagi berdasarkan audiens (**Siswa/Orang Tua** dan **Guru/Staf**).
-3. **Download Center Administrasi Mandiri:** Memfasilitasi siswa, alumni, dan staf dengan template dokumen administrasi siap unduh (.docx) seperti:
-   * *Layanan Siswa/Alumni:* Surat Keterangan Aktif Siswa, Surat Keterangan SKHUN, Surat Keterangan Pengganti Ijazah, Surat Kuasa, Surat Pernyataan Saksi, dsb.
-   * *Layanan Guru/Staf:* Surat Pernyataan Kinerja (SPK) TPG, SPTJM TPG, Surat Tugas, dan Surat Keterangan Basen Error.
-4. **Desain Visual "Generous Whitespace":** Layout modern menggunakan **Tailwind CSS + shadcn/ui** dengan sistem spasi konsisten (8pt grid), tipografi kontras (Plus Jakarta Sans/Poppins untuk Heading, Inter untuk Body), serta transisi mikro-interaksi yang halus.
-5. **Performa Superior:** Menggunakan optimasi gambar Next.js (`next/image`), Server-Side Rendering (SSR), dan static caching untuk mencapai skor Lighthouse $\ge 90$ pada metrik performa dan SEO.
+> **🔗 Tautan Repository GitHub:** [https://github.com/ifanhakm/website_mtsn1acehbaratdaya](https://github.com/ifanhakm/website_mtsn1acehbaratdaya)
+> **📐 Referensi Utama:** Mengacu pada fungsionalitas komprehensif `mtsn5sleman.sch.id` namun disempurnakan dengan prinsip desain **Clean, Minimalis, dan Navigasi Datar (Maksimal 2 Level Dropdown)**.
 
 ---
 
-## 🛠️ Tech Stack (Teknologi yang Digunakan)
+## 🌟 Fitur Utama Website
 
-Sesuai cetak biru teknis, arsitektur website ini dirancang tanpa memerlukan VPS mentah agar meminimalkan perawatan server (*low maintenance*):
+1. **Beranda Dinamis (Homepage):**
+   * **Hero Section:** Tagline madrasah, visual gedung utama, dan tombol aksi (Call to Action) terarah.
+   * **Statistik Sekolah:** Menampilkan Rombe, Siswa Aktif, Jumlah Guru, dan Akreditasi secara profesional.
+   * **Sambutan Kepala Sekolah:** Tata letak berdampingan rapat di tengah layar (*Cohesive Centered Grid*) untuk kenyamanan membaca yang seimbang di desktop maupun perangkat mobile.
+   * **3 Pilar Utama:** Highlight komitmen sekolah pada aspek Imtaq, Iptek, dan Berwawasan Lingkungan.
+   * **Kabar Terbaru:** Integrasi otomatis 3 artikel berita terhangat langsung dari database.
 
-| Layer | Teknologi | Alasan Pemilihan |
-| :--- | :--- | :--- |
-| **Frontend Framework** | **Next.js 15 (App Router) & TypeScript** | SEO-friendly, transisi instan, dan performa tinggi melalui SSR/SSG. |
-| **Styling & UI Library** | **Tailwind CSS + shadcn/ui** | Mempercepat pembuatan UI yang konsisten, bersih, dan mudah disesuaikan. |
-| **CMS & Admin Panel** | **Payload CMS 3.x** | *Headless CMS* berbasis Node.js yang *type-safe*, terintegrasi mulus dalam Next.js App Router, dan menyediakan GUI Admin yang intuitif mirip WordPress. |
-| **Database** | **PostgreSQL (Managed)** | Stabil dan didukung secara native oleh Payload/Prisma ORM. |
-| **Infrastructure (Hosting)**| **Vercel** (Frontend) + **Neon / Supabase** (Database) + **Railway / Render** (CMS/Backend) | Pendekatan *serverless* terkelola; mengeliminasi kebutuhan mengelola SSH, OS patches, SSL manual, atau *Docker maintenance*. |
-| **Form & Email Service** | **Resend / Nodemailer** | Mengamankan pengiriman email dari formulir kontak. |
-| **Analytics** | **Google Analytics 4 & Search Console** | Standar pelacakan lalu lintas dan kesehatan SEO situs instansi pemerintah. |
+2. **Direktori Pendidik & Tenaga Kependidikan:**
+   * Diintegrasikan secara dinamis ke database PostgreSQL via Payload CMS.
+   * **Portrait 3:4 View:** Foto guru disajikan dalam rasio portrait presisi seperti situs institusi papan atas.
+   * **Smart Top-Crop (`object-top`):** Kompresi visual cerdas yang memastikan area wajah dan kepala dewan guru tidak terpotong saat dirender dalam bingkai.
+   * **Interaktivitas Instan:** Filter tab instan ("Semua", "Pendidik", "Staf TU") dan pencarian responsif tanpa loading ulang.
+
+3. **Pusat Unduhan (Download Center):**
+   * Media unduh blangko dokumen resmi sekolah untuk siswa maupun guru (misalnya: Surat Keterangan Aktif Siswa, Kehilangan Ijazah, Surat Tugas).
+   * **Dukungan Beragam Format (.docx, .pdf, .xlsx):** Setiap tipe file didekorasi secara visual dengan ikon dan warna identitas yang selaras (ikon spreadsheet hijau lembut untuk berkas Excel `.xlsx` seperti Formulir Cuti dan SPPD).
+
+4. **Portal Layanan Terpadu:**
+   * Pusat integrasi tautan sistem eksternal (RDM Kemenag, Presensi, PTSP, EMIS, dll) yang disajikan dalam bentuk koleksi kartu taktis per kelompok audiens (Siswa, Wali Murid, Guru/Staf).
+
+5. **Panel Admin CMS Modern (Branded Dashboard):**
+   * Dasbor administrasi berbasis web yang kokoh, aman, dan mudah digunakan oleh staf sekolah.
+   * **White-Label Branding:** Dashboard dihias dengan logo resmi madrasah berwarna emas-hijau mulia menggunakan taktik injeksi stylesheet murni (bukan jalur importMap yang sensitif) untuk jaminan performa stabil.
 
 ---
 
-## 📂 Struktur Folder Proyek (Next.js 15 App Router)
+## 🛠️ Tech Stack & Strategi Hosting
 
-Proyek ini menggunakan struktur folder monorepo di mana Payload CMS tertanam secara *native* di dalam Next.js App Router:
+* **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Framer Motion.
+* **Styling:** Tailwind CSS, Lucide Icons, SCSS (untuk integrasi dashboard).
+* **Headless CMS & Local API:** Payload CMS v3 (Stable Version) — mengadopsi struktur fullstack Next.js native.
+* **Database Utama:** PostgreSQL di-hosting secara aman di **Supabase**.
+* **Penyimpanan Gambar/Media:** Supabase Storage Bucket (`media`) — mencegah hilangnya aset akibat karakteristik restart server serverless (*ephemeral file system*).
+* **Strategi Deployment Produksi:**
+  * **Frontend & Serverless API:** Di-deploy ke **Vercel** (Gratis, auto-SSL, CDN super cepat).
+  * **CMS Backend Server:** Di-deploy ke **Railway** atau **Render** yang terhubung langsung ke repositori GitHub.
+
+---
+
+## 📂 Struktur Direktori Proyek
+
+Berikut adalah peta struktur folder dan berkas dalam proyek ini:
 
 ```text
 website_mtsn1acehbaratdaya/
-├── app/                            # Direktori Utama Next.js App Router
-│   ├── (public)/                   # Rute Publik (Akses Tanpa Login)
-│   │   ├── page.tsx                # Beranda (Hero, Statistik, Berita Utama)
-│   │   ├── profil/
-│   │   │   ├── sejarah/            # Halaman Sejarah Sekolah (Tua, Unggul & Inovatif)
-│   │   │   ├── visi-misi/          # Visi-Misi Sekolah (Imtaq, Iptek, Wiyata Mandala)
-│   │   │   └── staf/               # Direktori Interaktif Pendidik & Kependidikan
-│   │   ├── berita/
-│   │   │   ├── page.tsx            # Index Berita (dengan Search & Filter Kategori)
-│   │   │   └── [slug]/             # Detail Berita Dinamis (dengan RichTextRenderer)
-│   │   ├── layanan/                # Portal Layanan Terpadu (Card-Based)
-│   │   └── kontak/                 # Halaman Hubungi Kami (Map Embed & Form Kontak)
+├── public/                            # File statis publik (Logo, Favicon, PDF template)
+│   ├── logo.jpg                       # Logo resmi MTsN 1 Aceh Barat Daya
+│   ├── media/                         # Folder penyimpanan berkas media lokal (mode development)
+│   └── downloads/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
+│
+├── src/
+│   ├── app/                           # Struktur Next.js App Router (Next.js 15)
+│   │   ├── (public)/                  # Halaman publik pengunjung website (Layout Tradisional)
+│   │   │   ├── page.tsx               # Landing Page Utama (Homepage)
+│   │   │   ├── layout.tsx             # Layout Publik (Integrasi Navbar, Footer, suppressHydration)
+│   │   │   ├── profil/
+│   │   │   │   ├── sejarah/page.tsx   # Sejarah berdirinya madrasah sejak 1969
+│   │   │   │   ├── visi-misi/page.tsx # Visi, misi, dan pilar komitmen
+│   │   │   │   └── staf/
+│   │   │   │       ├── page.tsx       # Server Component: Penarikan data staf dari Supabase
+│   │   │   │       └── StafClient.tsx # Client Component: Filter, search, dan grid portrait 3:4
+│   │   │   ├── kabar/
+│   │   │   │   └── berita/            # Pusat Dokumentasi & Berita Madrasah
+│   │   │   ├── layanan/               # Portal Layanan Terintegrasi
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── LayananClient.tsx
+│   │   │   ├── unduh/                 # Download Center (DOCX, PDF, XLSX)
+│   │   │   │   ├── page.tsx
+│   │   │   │   └── UnduhClient.tsx
+│   │   │   └── kontak/page.tsx        # Kontak madrasah (Alamat, Maps Embed, Form Kirim Pesan)
+│   │   │
+│   │   └── (payload)/                 # Area Sistem Kontrol CMS Admin
+│   │       ├── admin/
+│   │       │   ├── [[...segments]]/page.tsx
+│   │       │   └── importMap.js       # Peta indeks komponen kustom Payload
+│   │       ├── api/[...slug]/route.ts # REST API & GraphQL Endpoint dari Payload
+│   │       └── layout.tsx             # Layout panel kontrol CMS
 │   │
-│   ├── (cms)/                      # Bagian Admin Panel CMS (Payload 3.x)
-│   │   └── admin/                  # Endpoint /admin untuk Pengelolaan Konten
+│   ├── components/                    # Komponen UI Bersama yang Reusable
+│   │   ├── Navbar.tsx                 # Navigasi sticky responsif maksimal 2 level dropdown
+│   │   ├── Footer.tsx                 # Informasi penutup, alamat, dan pranala luar
+│   │   └── CmsLogo.tsx                # Komponen logo kustom cadangan untuk panel kontrol
 │   │
-│   ├── api/                        # Rute API Backend
-│   │   └── graphql/                # Endpoint GraphQL (opsional, bawaan Payload)
-│   │
-│   ├── layout.tsx                  # Global Layout (Navbar, Footer, Toast Provider)
-│   └── globals.css                 # Import Tailwind CSS & Design Token Warna Kemenag
+│   └── cms/                           # Skema Koleksi Konten Payload CMS
+│       └── collections/
+│           ├── Berita.ts              # Schema artikel, slug generator, cover image
+│           ├── Staf.ts                # Schema nama, nip, jabatan, foto 3:4, urutan
+│           ├── Dokumen.ts             # Schema arsip dokumen unduhan (.docx, .xlsx)
+│           ├── Galeri.ts              # Schema dokumentasi foto kegiatan sekolah
+│           ├── KategoriLayanan.ts     # Schema kategorisasi menu layanan terpadu
+│           └── Media.ts               # Schema upload aset gambar ke Supabase Storage
 │
-├── components/                     # Komponen UI Modular & Reusable
-│   ├── ui/                         # Primitif Komponen shadcn/ui (Button, Card, Input, dll.)
-│   ├── layout/                     # Komponen Tata Letak (Navbar, Footer, MobileMenu)
-│   ├── home/                       # Komponen Khusus Beranda (HeroSection, Stats, NewsGrid)
-│   └── shared/                     # Komponen Bersama (Breadcrumb, SectionHeading, DocDownloader)
-│
-├── cms/                            # Konfigurasi & Skema Payload CMS
-│   ├── collections/                # Koleksi Konten Dinamis (Database Tables)
-│   │   ├── Posts.ts                # Skema Koleksi Berita
-│   │   ├── Categories.ts           # Skema Kategori Berita
-│   │   ├── StaffMembers.ts         # Skema Tenaga Pendidik & Kependidikan
-│   │   ├── Facilities.ts           # Skema Sarana & Prasarana
-│   │   └── ServiceLinks.ts         # Skema Kartu Tautan Portal Layanan & Unduhan Dokumen
-│   │
-│   ├── globals/                    # Pengaturan Global Situs (Singletons)
-│   │   └── SiteSettings.ts         # Kontak Global, Logo, Sosmed, Tahun Pelajaran
-│   │
-│   └── payload.config.ts           # Berkas Konfigurasi Utama Payload CMS
-│
-├── public/                         # Aset Statis yang Dapat Diakses Publik
-│   ├── logo-mtsn.svg               # Logo Resmi MTsN 1 Aceh Barat Daya
-│   ├── icons/                      # Ikon untuk Kartu Portal Layanan
-│   └── placeholders/               # Gambar Cadangan (*Fallback*)
-│
-├── lib/                            # Kode Utilitas dan Integrasi
-│   ├── db.ts                       # Inisialisasi Koneksi Database
-│   ├── utils.ts                    # Utilitas CN (Tailwind Merge)
-│   └── resend.ts                   # Konfigurasi Pengiriman Email
-│
-├── styles/                         # Pengaturan Desain Sistem Tambahan
-├── types/                          # Deklarasi Tipe TypeScript Global
-│
-├── .env.example                    # Template Variabel Lingkungan
-├── tailwind.config.ts              # Konfigurasi Tema (Warna Hijau Madrasah, Font Poppins)
-├── tsconfig.json                   # Konfigurasi TypeScript
-├── package.json                    # Daftar Dependensi Proyek
-└── README.md                       # Dokumentasi Proyek Ini
+├── src/payload.config.ts              # Berkas konfigurasi utama Payload CMS v3
+├── next.config.ts                     # Konfigurasi Next.js (optimasi remotePattern gambar Supabase)
+├── tailwind.config.ts                 # Desain sistem Tailwind CSS (warna, font, spacing)
+├── tsconfig.json                      # Konfigurasi TypeScript (alias jalur @payload-config)
+├── package.json                       # Dependensi proyek & shortcut skrip build
+└── .env.local                         # Kredensial lingkungan lokal (rahasia, tidak di-push ke git)
 ```
 
 ---
 
-## 🗄️ Model Data (Skema Koleksi CMS)
+## ⚙️ Panduan Menjalankan Proyek di Lokal
 
-Sesuai dengan rancangan data di CMS, skema diatur secara modular dan terintegrasi:
+### 1. Prasyarat Sistem
+* Pastikan komputer Anda sudah terinstal **Node.js** (Rekomendasi versi `>= 20.9.0`) dan **npm** / **pnpm**.
 
-### 1. `Post` (Berita / Kegiatan Sekolah)
-* **Field:**
-  * `title` (Text) - Judul berita.
-  * `slug` (Text, Auto-generated) - URL ramah SEO.
-  * `coverImage` (Media) - Gambar utama berita.
-  * `excerpt` (Text) - Ringkasan singkat berita.
-  * `content` (Rich Text) - Konten utama tulisan.
-  * `category` (Relation $\rightarrow$ `Category`) - Kategori berita.
-  * `publishedAt` (Date) - Tanggal rilis.
-  * `author` (Text) - Penulis berita (Staf Humas).
-  * `status` (Select: `draft` / `published`) - Alur publikasi konten.
+### 2. Kloning Proyek
+```bash
+git clone https://github.com/ifanhakm/website_mtsn1acehbaratdaya.git
+cd website_mtsn1acehbaratdaya
+```
 
-### 2. `StaffMember` (Direktori Pendidik & Staf Kependidikan)
-* **Field:**
-  * `name` (Text) - Nama lengkap beserta gelar.
-  * `photo` (Media) - Foto profil resmi.
-  * `role` (Text) - Jabatan (misal: Kepala Madrasah, Guru Mapel Matematika, Staf TU).
-  * `subject` (Text, Optional) - Mata pelajaran yang diampu.
-  * `type` (Select: `pendidik` / `kependidikan`) - Pengelompokan kategori staf.
+### 3. Instalasi Dependensi
+```bash
+npm install
+```
 
-### 3. `ServiceLink` (Portal Layanan Terpadu & Download Center)
-* **Field:**
-  * `title` (Text) - Nama Layanan atau Berkas (misal: "Rapor Digital Madrasah (RDM)" atau "Formulir Surat Keterangan Aktif").
-  * `url` (URL / File Upload) - Tautan ke aplikasi eksternal atau file unduhan `.docx`.
-  * `description` (Text) - Deskripsi singkat fungsi layanan/dokumen.
-  * `audience` (Select: `siswa` / `orang-tua` / `guru` / `staf` / `alumni`) - Segmentasi hak akses tampilan.
-  * `icon` (Select/Text) - Ikon visual representatif.
+### 4. Konfigurasi Variabel Lingkungan (`.env.local`)
+Buat berkas bernama **`.env.local`** di root folder dan lengkapi kredensial Supabase Anda:
+```env
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+DATABASE_URI=postgresql://postgres.[ID_PROYEK_SUPABASE]:[PASS_DB]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
+PAYLOAD_SECRET=buat-string-acak-panjang-apa-saja-untuk-pengamanan-token
+SUPABASE_URL=https://[ID_PROYEK_SUPABASE].supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+SUPABASE_BUCKET_NAME=media
+```
 
----
-
-## 🔒 Manajemen Akses (Hak Akses Pengguna)
-
-Sistem login panel admin mengimplementasikan 2 Role utama:
-* **Super Admin (Developer):** Hak akses penuh ke seluruh pengaturan sistem, pengelolaan user lain, struktur database, dan integrasi API.
-* **Admin Konten (Humas/TU Sekolah):** Hak akses harian untuk menambah, mengubah, dan menghapus Berita, data Staf, Sarana Prasarana, serta file unduhan dokumen di Portal Layanan.
+### 5. Menjalankan Server Pengembangan
+```bash
+npm run dev
+```
+Buka browser Anda dan akses:
+*   🌐 **Website Utama:** `http://localhost:3000`
+*   🔑 **Admin Panel CMS:** `http://localhost:3000/admin`
 
 ---
 
-## 💻 Langkah Instalasi Lokal (Development)
+## ⚡ Penyelesaian Masalah Umum (Troubleshooting)
 
-1. **Clone repository:**
-   ```bash
-   git clone https://github.com/username/website_mtsn1acehbaratdaya.git
-   cd website_mtsn1acehbaratdaya
-   ```
+### 1. Hydration Mismatch Error (Akibat Ekstensi Browser)
+Jika Anda melihat log peringatan di konsol browser mengenai perbedaan atribut `has-extension` atau sejenisnya saat memuat halaman, masalah tersebut sudah diantisipasi di proyek ini dengan memasang:
+* Atribut `suppressHydrationWarning` pada tag `<html>` layout utama.
+* Properti `suppressHydrationWarning: true` di dalam blok `admin` pada file `payload.config.ts` untuk melumpuhkan peringatan di area panel admin.
 
-2. **Instal dependensi:**
-   ```bash
-   npm install
-   ```
-
-3. **Konfigurasi Environment Variables:**
-   Salin file `.env.example` menjadi `.env.local` dan lengkapi variabel berikut:
-   ```env
-   DATABASE_URI=postgresql://user:password@localhost:5432/mtsn_db
-   PAYLOAD_SECRET=your-super-secret-payload-key
-   NEXT_PUBLIC_SERVER_URL=http://localhost:3000
-   RESEND_API_KEY=re_your_api_key
-   ```
-
-4. **Jalankan server pengembangan:**
-   ```bash
-   npm run dev
-   ```
-   Buka [http://localhost:3000](http://localhost:3000) di browser Anda untuk melihat situs web, dan [http://localhost:3000/admin](http://localhost:3000/admin) untuk masuk ke panel administrasi Payload CMS.
+### 2. Impor Config Payload Tidak Ditemukan (`Module not found`)
+Gunakan alias resmi bawaan Payload CMS yaitu **`@payload-config`** (bukan `@/payload.config` dengan garis miring) untuk merujuk file konfigurasi di seluruh komponen halaman Next.js. Hal ini didaftarkan di `tsconfig.json` dan mencegah kegagalan resolusi folder saat proses kompilasi bundler.
 
 ---
 
-## 📋 Lisensi & Kontributor
+## 👥 Kontributor & Hak Cipta
 
-* **Klien:** MTsN 1 Aceh Barat Daya
-* **Hak Cipta:** © 2026 MTsN 1 Aceh Barat Daya. Hak Cipta Dilindungi Undang-Undang.
-* **Pengembang:** Kolaborasi Kreatif bersama *Gemini Notebook Agent*.
+* **Pengembang:** [Ifan Hakim](https://github.com/ifanhakm) (Coding Assistant & Developer)
+* **Hak Cipta:** © 2026 MTsN 1 Aceh Barat Daya. Hak cipta dilindungi undang-undang.
+* **Lisensi:** Proyek ini dilisensikan di bawah lisensi MIT untuk kepentingan pendidikan dan pengembangan madrasah.
+
+---
+*Dibuat dengan dedikasi penuh untuk kemajuan digitalisasi madrasah wiyata mandala di Bumi Serambi Mekkah.* 🌴🕋
