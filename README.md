@@ -6,8 +6,7 @@
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-316192?style=for-the-badge&logo=postgresql)](https://supabase.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
-> **🔗 Tautan Repository GitHub:** [https://github.com/ifanhakm/website_mtsn1acehbaratdaya](https://github.com/ifanhakm/website_mtsn1acehbaratdaya)
-> **📐 Referensi Utama:** Mengacu pada fungsionalitas komprehensif `mtsn5sleman.sch.id` namun disempurnakan dengan prinsip desain **Clean, Minimalis, dan Navigasi Datar (Maksimal 2 Level Dropdown)**.
+Repositori Resmi pengembangan website **Madrasah Tsanawiyah Negeri 1 Aceh Barat Daya** (MTsN 1 Abdya), salah satu **Madrasah Inovasi** terkemuka di Provinsi Aceh. Proyek ini dibangun ulang dengan arsitektur modern berorientasi masa depan yang bersih, sangat cepat, responsif mobile-first, serta ramah tata kelola bagi tim Humas dan Tata Usaha sekolah.
 
 ---
 
