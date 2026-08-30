@@ -16,6 +16,7 @@
   "dependencies": {
     "@base-ui/react": "^1.7.0",
     "@payloadcms/db-postgres": "^3.88.0",
+    "@payloadcms/email-resend": "^3.88.0",
     "@payloadcms/next": "^3.88.0",
     "@payloadcms/storage-s3": "^3.88.0",
     "class-variance-authority": "^0.7.1",

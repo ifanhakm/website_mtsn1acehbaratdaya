@@ -1,5 +1,6 @@
 // Path: src/payload.config.ts
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import sharp from 'sharp'
@@ -21,6 +22,13 @@ const dirname = path.dirname(filename)
 
 export default buildConfig({
   serverURL: env.NEXT_PUBLIC_SERVER_URL,
+  email: env.RESEND_API_KEY
+    ? resendAdapter({
+        defaultFromAddress: env.RESEND_FROM_EMAIL,
+        defaultFromName: 'MTsN 1 Aceh Barat Daya',
+        apiKey: env.RESEND_API_KEY,
+      })
+    : undefined,
   admin: {
     user: 'users',
     suppressHydrationWarning: true,
@@ -62,7 +70,10 @@ export default buildConfig({
   db: postgresAdapter({
     pool: {
       connectionString: env.DATABASE_URI,
-      ssl: env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: true },
+      ssl:
+        env.DATABASE_SSL === 'false'
+          ? false
+          : { rejectUnauthorized: env.DATABASE_SSL === 'true' },
       max: 4  ,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 30000,

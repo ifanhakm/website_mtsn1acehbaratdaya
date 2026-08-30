@@ -35,6 +35,7 @@ yarn-error.log*
 # environment files (keep only the documented template)
 .env*
 !.env.example
+!deploy/.env.deploy.example
 /env
 
 # local npm cache used by Windows development environments

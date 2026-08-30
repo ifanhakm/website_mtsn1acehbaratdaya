@@ -1,7 +1,7 @@
 // Path: src/app/(payload)/admin/[[...segments]]/page.tsx
 import { RootPage, generatePageMetadata } from '@payloadcms/next/views'
 import config from '@/payload.config'
-import { importMap } from '../../importMap' // Path mengarah ke file importMap di src/app/(payload)/importMap
+import { importMap } from '../importMap.js'
 
 type Args = {
   params: Promise<{

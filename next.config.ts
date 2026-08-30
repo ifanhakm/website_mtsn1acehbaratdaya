@@ -22,7 +22,7 @@ for (const candidate of [process.env.SUPABASE_URL, process.env.SUPABASE_S3_ENDPO
 }
 
 const nextConfig: NextConfig = {
-  /* Di sini Anda bisa memasukkan konfigurasi Next.js bawaan Anda kelak */
+  output: 'standalone',
   images: {
     remotePatterns,
   },

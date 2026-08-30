@@ -1,0 +1,61 @@
+name: mtsn1acehbaratdaya
+
+services:
+  app:
+    image: ${APP_IMAGE}
+    pull_policy: always
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    expose:
+      - "3000"
+    volumes:
+      - media_data:/app/public/media
+      - documents_data:/app/public/documents
+      - next_cache:/app/.next/cache
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    deploy:
+      resources:
+        limits:
+          memory: 1200M
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS}
+      ACME_EMAIL: ${ACME_EMAIL}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  media_data:
+  documents_data:
+  next_cache:
+  caddy_data:
+  caddy_config:
+

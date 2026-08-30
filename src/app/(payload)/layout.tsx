@@ -2,7 +2,7 @@
 import React from 'react'
 import config from '@/payload.config'
 import '@payloadcms/next/css'
-import { importMap } from './importMap' 
+import { importMap } from './admin/importMap.js'
 import { RootLayout, handleServerFunctions } from '@payloadcms/next/layouts'
 import { ServerFunctionClient } from 'payload'
 
