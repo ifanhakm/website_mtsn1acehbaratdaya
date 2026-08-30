@@ -21,7 +21,15 @@ export const Berita: CollectionConfig = {
     defaultColumns: ['title', 'category', 'date', 'status', 'isFeatured'],
   },
   access: {
-    read: () => true, // Siapa saja (publik) bisa membaca berita
+    read: ({ req: { user } }) => {
+      if (user) return true;
+
+      return {
+        status: {
+          equals: 'published',
+        },
+      };
+    },
     create: ({ req: { user } }) => {
       // Hanya user yang login (Admin/Humas) yang bisa membuat berita
       return !!user;

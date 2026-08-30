@@ -32,8 +32,13 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files
-.env.local
+# environment files (keep only the documented template)
+.env*
+!.env.example
+/env
+
+# local npm cache used by Windows development environments
+/.npm-cache/
 
 # typescript
 *.tsbuildinfo

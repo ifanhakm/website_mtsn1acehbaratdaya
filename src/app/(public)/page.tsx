@@ -2,6 +2,8 @@ import React from 'react'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+
+export const revalidate = 300
 import { 
   ArrowRight, 
   BookOpen, 
@@ -14,7 +16,22 @@ import {
   Leaf,
   ExternalLink
 } from 'lucide-react'
-import { User } from "lucide-react";
+
+interface MediaValue {
+  url?: string | null
+  alt?: string | null
+}
+
+interface HomeNews {
+  id: string | number
+  title: string
+  slug: string
+  excerpt: string
+  date: string
+  category: string
+  readTime: string
+  image: string | number | MediaValue
+}
 
 // Fungsi Pembantu: Format Tanggal ke Bahasa Indonesia
 const formatTanggalIndo = (dateStr: string) => {
@@ -27,7 +44,7 @@ const formatTanggalIndo = (dateStr: string) => {
 }
 
 // Fungsi Pembantu: Mengambil URL Gambar dari Payload Media
-const getImageUrl = (imageField: any): string => {
+const getImageUrl = (imageField: HomeNews['image'] | null | undefined): string => {
   if (!imageField) return '/logo.jpg' // Fallback ke logo jika tidak ada gambar
   if (typeof imageField === 'object' && imageField.url) {
     return imageField.url
@@ -36,23 +53,30 @@ const getImageUrl = (imageField: any): string => {
 }
 
 export default async function HomePage() {
-  // 1. Inisialisasi Payload Instance di Server Side
-  const payload = await getPayload({ config })
+  let latestNews: HomeNews[] = []
 
-  // 2. Tarik 3 Berita Terbaru yang berstatus 'published' dari Supabase
-  const result = await payload.find({
-    collection: 'berita',
-    where: {
-      status: {
-        equals: 'published',
+  try {
+    const payload = await getPayload({ config })
+    const result = await payload.find({
+      collection: 'berita',
+      where: {
+        status: {
+          equals: 'published',
+        },
       },
-    },
-    sort: '-date', // Urutkan dari berita terbaru
-    limit: 3,      // Batasi hanya 3 berita untuk preview di beranda
-    depth: 1,      // Ambil relasi media/gambar utuh
-  })
+      sort: '-date',
+      limit: 3,
+      depth: 1,
+    })
 
-  const latestNews = result.docs
+    latestNews = result.docs.flatMap((news) =>
+      news.slug
+        ? [{ id: news.id, title: news.title, slug: news.slug, excerpt: news.excerpt, date: news.date, category: news.category, readTime: news.readTime, image: news.image }]
+        : [],
+    )
+  } catch (error) {
+    console.error('Berita beranda tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
+  }
 
   // Statistik Sekolah (Statis)
   const stats = [
@@ -250,7 +274,7 @@ export default async function HomePage() {
               </div>
               <h3 className="text-xl font-bold text-gray-950 mb-3">Imtaq & Karakter Islami</h3>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Menyelenggarakan kegiatan keagamaan intensif, pembiasaan akhlak mulia, perbaikan bacaan Quran, dan hafalan juz amma (Tahfidz) harian untuk membentuk pribadi qur'ani.
+                Menyelenggarakan kegiatan keagamaan intensif, pembiasaan akhlak mulia, perbaikan bacaan Quran, dan hafalan juz amma (Tahfidz) harian untuk membentuk pribadi qur&apos;ani.
               </p>
             </div>
 
@@ -309,7 +333,7 @@ export default async function HomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {latestNews.map((news: any) => (
+              {latestNews.map((news) => (
                 <article key={news.id} className="bg-white rounded-2xl border border-gray-150 overflow-hidden shadow-sm flex flex-col hover:shadow-md transition-shadow group">
                   <div className="relative aspect-video bg-gray-100 overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}

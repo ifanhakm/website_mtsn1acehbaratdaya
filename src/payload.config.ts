@@ -1,6 +1,6 @@
 // Path: src/payload.config.ts
 import { postgresAdapter } from '@payloadcms/db-postgres'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
 import sharp from 'sharp'
 import { buildConfig } from 'payload'
@@ -14,11 +14,13 @@ import { Staf } from './cms/collections/Staf'
 import { Dokumen } from './cms/collections/Dokumen'
 import { KategoriLayanan } from './cms/collections/KategoriLayanan'
 import { Galeri } from './cms/collections/Galeri'
+import { cloudStorageEnabled, env } from './lib/env'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  serverURL: env.NEXT_PUBLIC_SERVER_URL,
   admin: {
     user: 'users',
     suppressHydrationWarning: true,
@@ -52,22 +54,38 @@ export default buildConfig({
   globals: [
     ProfilSekolah,
   ],
-  editor: lexicalEditor({}), // Editor teks modern Lexical
-  secret: process.env.PAYLOAD_SECRET || 'SECRET_UNTUK_DEVELOPMENT_LOKAL_SAJA_12345',
+  secret: env.PAYLOAD_SECRET,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   // Hubungkan ke Supabase PostgreSQL melalui Variabel Lingkungan (.env.local)
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || '',
-      ssl: {
-        rejectUnauthorized: false,
-      },
+      connectionString: env.DATABASE_URI,
+      ssl: env.DATABASE_SSL === 'false' ? false : { rejectUnauthorized: true },
       max: 4  ,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 30000,
     },
     push: false,
   }),
+  plugins: [
+    s3Storage({
+      enabled: cloudStorageEnabled,
+      bucket: env.SUPABASE_BUCKET_NAME || 'local-development',
+      collections: {
+        media: { prefix: 'media' },
+        dokumen: { prefix: 'documents' },
+      },
+      config: {
+        endpoint: env.SUPABASE_S3_ENDPOINT,
+        forcePathStyle: true,
+        region: env.SUPABASE_S3_REGION,
+        credentials: {
+          accessKeyId: env.SUPABASE_S3_ACCESS_KEY_ID || '',
+          secretAccessKey: env.SUPABASE_S3_SECRET_ACCESS_KEY || '',
+        },
+      },
+    }),
+  ],
 })

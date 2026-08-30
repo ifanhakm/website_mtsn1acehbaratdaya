@@ -1,17 +1,20 @@
 // Path: src/components/CmsLogo.tsx
 import React from 'react'
+import Image from 'next/image'
 
 export const CmsLogo: React.FC = () => {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <img 
+      <Image
         src="/logo.jpg" 
         alt="Logo MTsN 1 Aceh Barat Daya" 
+        width={45}
+        height={45}
         style={{ 
           height: '45px', 
           width: 'auto', 
           borderRadius: '8px',
-          border: '2px border #D1BB07'
+          border: '2px solid #D1BB07'
         }} 
       />
       <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -29,9 +32,11 @@ export const CmsLogo: React.FC = () => {
 // Komponen ikon kecil saat sidebar diciutkan (collapsed)
 export const CmsIcon: React.FC = () => {
   return (
-    <img 
+    <Image
       src="/logo.jpg" 
       alt="Icon" 
+      width={32}
+      height={32}
       style={{ height: '32px', width: 'auto', borderRadius: '6px' }} 
     />
   )

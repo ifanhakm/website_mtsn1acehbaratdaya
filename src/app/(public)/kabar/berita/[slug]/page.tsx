@@ -1,11 +1,12 @@
 // Path: src/app/(public)/kabar/berita/[slug]/page.tsx
-import React from 'react'
+import React, { cache } from 'react'
+import type { Metadata } from 'next'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { ChevronRight, Calendar, User, Clock, ArrowLeft, Tag } from 'lucide-react'
+import { ChevronRight, Calendar, User, Clock, ArrowLeft } from 'lucide-react'
 
 interface RouteParams {
   params: Promise<{
@@ -16,7 +17,61 @@ interface RouteParams {
 // =========================================================================
 // SERIALIZER LEXICAL RICH TEXT UNTUK MENAMPILKAN "ISI LENGKAP" BERITA
 // =========================================================================
-function RichTextRenderer({ content }: { content: any }) {
+interface LexicalNode {
+  type: string
+  text?: string
+  format?: number
+  tag?: 'h1' | 'h2' | 'h3'
+  listType?: string
+  children?: LexicalNode[]
+}
+
+const getPublishedNews = cache(async (slug: string) => {
+  try {
+    const payload = await getPayload({ config })
+    const result = await payload.find({
+      collection: 'berita',
+      where: {
+        and: [
+          { slug: { equals: slug } },
+          { status: { equals: 'published' } },
+        ],
+      },
+      depth: 1,
+      limit: 1,
+    })
+    return result.docs[0] ?? null
+  } catch (error) {
+    console.error('Detail berita tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
+    return null
+  }
+})
+
+export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
+  const { slug } = await params
+  const berita = await getPublishedNews(slug)
+
+  if (!berita) return { title: 'Berita tidak ditemukan' }
+
+  const imageRecord = typeof berita.image === 'object' ? berita.image : null
+  const image = imageRecord?.url
+  return {
+    title: berita.title,
+    description: berita.excerpt,
+    openGraph: {
+      title: berita.title,
+      description: berita.excerpt,
+      type: 'article',
+      images: image ? [{ url: image, alt: imageRecord?.alt || berita.title }] : undefined,
+    },
+  }
+}
+
+interface LexicalContent {
+  root: { children: LexicalNode[] }
+}
+
+function RichTextRenderer({ content }: { content: string | LexicalContent }) {
   if (!content) return null
 
   // 🌟 JALUR PENYELAMAT: Jika isinya berupa teks biasa/string (dari textarea)
@@ -38,32 +93,33 @@ function RichTextRenderer({ content }: { content: any }) {
   // JALUR CADANGAN: Jika di kemudian hari Anda kembali menggunakan JSON Lexical asli
   if (!content.root || !content.root.children) return null  
 
-  const renderNode = (node: any, index: number): React.ReactNode => {
+  const renderNode = (node: LexicalNode, index: number): React.ReactNode => {
     if (!node) return null
 
     // 1. Jika ini adalah node teks biasa
     if (node.type === 'text') {
-      let text = node.text
+      const text = node.text || ''
+      const format = node.format || 0
       let element: React.ReactNode = text
 
       // Penanganan format bitwise Lexical (Bold, Italic, Underline, dll)
-      if (node.format & 1) { // Bold
+      if (format & 1) { // Bold
         element = <strong key={index}>{element}</strong>
       }
-      if (node.format & 2) { // Italic
+      if (format & 2) { // Italic
         element = <em key={index}>{element}</em>
       }
-      if (node.format & 8) { // Underline
+      if (format & 8) { // Underline
         element = <span key={index} className="underline">{element}</span>
       }
-      if (node.format & 16) { // Strikethrough
+      if (format & 16) { // Strikethrough
         element = <span key={index} className="line-through">{element}</span>
       }
       return <span key={index}>{element}</span>
     }
 
     // 2. Jika ini adalah parent node yang memiliki anak (children)
-    const children = node.children ? node.children.map((child: any, idx: number) => renderNode(child, idx)) : []
+    const children = node.children ? node.children.map((child, idx) => renderNode(child, idx)) : []
 
     switch (node.type) {
       case 'paragraph':
@@ -97,7 +153,7 @@ function RichTextRenderer({ content }: { content: any }) {
 
   return (
     <div className="rich-text-content">
-      {content.root.children.map((child: any, idx: number) => renderNode(child, idx))}
+      {content.root.children.map((child, idx) => renderNode(child, idx))}
     </div>
   )
 }
@@ -107,27 +163,11 @@ function RichTextRenderer({ content }: { content: any }) {
 // =========================================================================
 export default async function DetailBeritaPage({ params }: RouteParams) {
   const { slug } = await params
-  const payload = await getPayload({ config })
+  const berita = await getPublishedNews(slug)
 
-  // Ambil berita spesifik berdasarkan slug dari Supabase
-  const result = await payload.find({
-    collection: 'berita',
-    where: {
-      slug: {
-        equals: slug,
-      },
-      status: {
-        equals: 'published',
-      },
-    },
-    depth: 1, // Populate data relasi gambar (media) & penulis (users) secara utuh
-  })
-
-  if (result.docs.length === 0) {
+  if (!berita) {
     notFound()
   }
-
-  const berita = result.docs[0] as any
 
   const formatTanggalIndo = (dateStr: string) => {
     try {
@@ -180,7 +220,7 @@ export default async function DetailBeritaPage({ params }: RouteParams) {
             </span>
             <span className="flex items-center gap-1.5">
               <User className="w-4 h-4 text-brand-gold" />
-              {berita.author && typeof berita.author === 'object' ? berita.author.name || 'Humas Madrasah' : 'Humas Madrasah'}
+               Humas Madrasah
             </span>
             <span className="flex items-center gap-1.5">
               <Clock className="w-4 h-4 text-brand-gold" />
@@ -208,7 +248,7 @@ export default async function DetailBeritaPage({ params }: RouteParams) {
           <div className="relative h-64 sm:h-96 md:h-[450px] w-full overflow-hidden rounded-2xl bg-gray-100 mb-8 flex items-center justify-center">
             <Image
               src={getImageUrl()}
-              alt={berita.image?.alt || berita.title}
+              alt={typeof berita.image === 'object' ? berita.image.alt || berita.title : berita.title}
               fill
               className="object-cover"
               priority

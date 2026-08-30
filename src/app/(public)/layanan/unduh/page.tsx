@@ -3,6 +3,20 @@ import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import UnduhClient, { type DocumentItem } from './UnduhClient'
+import { z } from 'zod'
+
+export const revalidate = 300
+
+const documentRecordSchema = z.object({
+  id: z.union([z.string(), z.number()]),
+  title: z.string(),
+  description: z.string(),
+  category: z.enum(['siswa', 'kepegawaian', 'umum']).nullish(),
+  filename: z.string().nullish(),
+  filesize: z.number().nullish(),
+  url: z.string().nullish(),
+  badge: z.string().nullish(),
+})
 
 export default async function DownloadCenterPage() {
   let dbDocuments: DocumentItem[] = []
@@ -18,9 +32,12 @@ export default async function DownloadCenterPage() {
     })
 
     // 3. Konversi format data Payload ke format props yang ramah bagi Client Component
-    dbDocuments = result.docs.map((doc: any) => {
+    dbDocuments = result.docs.flatMap((value) => {
+      const parsed = documentRecordSchema.safeParse(value)
+      if (!parsed.success) return []
+      const doc = parsed.data
       // Deteksi format berkas (PDF atau DOCX) berdasarkan mimeType / nama file
-      const extension = doc.filename ? doc.filename.split('.').pop().toUpperCase() : 'FILE'
+      const extension = doc.filename ? doc.filename.split('.').pop()?.toUpperCase() || 'FILE' : 'FILE'
       const fileType = extension
 
       // Format ukuran berkas agar mudah dibaca manusia (KB / MB)
@@ -29,17 +46,17 @@ export default async function DownloadCenterPage() {
         ? `${(sizeInKb / 1024).toFixed(1)} MB` 
         : `${sizeInKb} KB`
 
-      return {
+      return [{
         id: doc.id,
         title: doc.title,
         description: doc.description,
         category: doc.category || 'siswa',
         fileSize: fileSize,
         fileType: fileType,
-        fileName: doc.filename,
-        fileUrl: doc.url, // Tautan download langsung ke Supabase Storage
+        fileName: doc.filename || '',
+        fileUrl: doc.url || undefined,
         badge: doc.badge || undefined,
-      }
+      }]
     })
   } catch (error) {
     console.error("Gagal menarik data dokumen dari database Supabase:", error)

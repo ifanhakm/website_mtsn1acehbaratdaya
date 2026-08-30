@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
-import { Mail, MapPin, Phone, Globe, Award } from "lucide-react";
+import { Mail, MapPin, Phone, Award } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();

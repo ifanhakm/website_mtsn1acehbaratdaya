@@ -8,7 +8,7 @@ import { Search, Users, GraduationCap, Briefcase, ChevronRight, User } from 'luc
 
 // Definisikan tipe data StaffMember yang disesuaikan secara 100% presisi dengan skema Staf.ts
 export interface StaffMember {
-  id: string
+  id: string | number
   namaLengkap: string
   nip?: string | null
   jabatan: string
@@ -16,7 +16,7 @@ export interface StaffMember {
   foto: {
     url?: string | null
     alt?: string | null
-  } | string | null
+  } | string | number | null
   urutan: number
 }
 
@@ -124,7 +124,6 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
                 <p className="text-sm font-bold text-gray-400 uppercase tracking-wide mt-1">
                   {kepalaMadrasah.jabatan}
                 </p>
-                
                 {kepalaMadrasah.nip && (
                   <p className="text-xs font-semibold text-gray-500 mt-1">
                     NIP. {kepalaMadrasah.nip}
@@ -264,7 +263,7 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
             <Users className="w-12 h-12 text-gray-300 mx-auto mb-4 stroke-[1.2]" />
             <h3 className="text-lg font-bold text-gray-700">Tidak ada personel ditemukan</h3>
             <p className="text-sm text-gray-400 max-w-xs mx-auto mt-1 font-medium">
-              Tidak ada hasil untuk kata kunci "{searchQuery}" pada kategori tab yang Anda pilih.
+              Tidak ada hasil untuk kata kunci &quot;{searchQuery}&quot; pada kategori tab yang Anda pilih.
             </p>
           </div>
         )}

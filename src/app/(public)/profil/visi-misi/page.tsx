@@ -3,6 +3,8 @@ import React from 'react'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+
+export const revalidate = 300
 import { 
   Award, 
   BookOpen, 
@@ -64,6 +66,14 @@ const defaultTujuanData = [
   "Memperbaiki bacaan Qur'an serta meningkatkan hafalan Qur'an peserta didik sehingga menjadi generasi Qur'ani."
 ]
 
+interface MissionRecord {
+  teksMisi: string
+}
+
+interface GoalRecord {
+  teksTujuan: string
+}
+
 // Helper: Memetakan ikon unik ke daftar tujuan
 const getTujuanIcon = (index: number) => {
   const icons = [
@@ -103,21 +113,21 @@ const getMisiColorAndCategory = (index: number) => {
 
 export default async function VisiMisiPage() {
   let dbVisi = ""
-  let dbMisi: any[] = []
-  let dbTujuan: any[] = []
+  let dbMisi: typeof defaultMisiData = []
+  let dbTujuan: string[] = []
 
   try {
     const payload = await getPayload({ config })
     const profil = await payload.findGlobal({
       slug: 'profil-sekolah',
       depth: 1,
-    }) as any
+    })
 
     if (profil) {
       if (profil.visi) dbVisi = profil.visi
       
       if (profil.misi && profil.misi.length > 0) {
-        dbMisi = profil.misi.map((item: any, index: number) => {
+        dbMisi = profil.misi.map((item: MissionRecord, index: number) => {
           const style = getMisiColorAndCategory(index)
           return {
             id: index + 1,
@@ -129,7 +139,7 @@ export default async function VisiMisiPage() {
       }
 
       if (profil.tujuan && profil.tujuan.length > 0) {
-        dbTujuan = profil.tujuan.map((item: any) => item.teksTujuan)
+        dbTujuan = profil.tujuan.map((item: GoalRecord) => item.teksTujuan)
       }
     }
   } catch (error) {
@@ -165,7 +175,7 @@ export default async function VisiMisiPage() {
               <span className="text-brand-gold">MTsN 1 Aceh Barat Daya</span>
             </h1>
             <p className="mt-4 text-base sm:text-lg text-gray-200 leading-relaxed font-medium">
-              Pernyataan visi strategis, penjabaran misi operasional, serta target tujuan jangka panjang madrasah untuk mendidik generasi Qur'ani yang berdaya saing global dan cinta lingkungan.
+              Pernyataan visi strategis, penjabaran misi operasional, serta target tujuan jangka panjang madrasah untuk mendidik generasi Qur&apos;ani yang berdaya saing global dan cinta lingkungan.
             </p>
           </div>
         </div>
@@ -198,7 +208,7 @@ export default async function VisiMisiPage() {
                 </div>
                 <h3 className="font-extrabold text-emerald-950 text-md mb-2">Imtaq & Karakter</h3>
                 <p className="text-xs text-emerald-800 leading-relaxed font-medium">
-                  Membentuk generasi islami yang qur'ani, berakhlak mulia, toleran, dan berpegang teguh pada nilai-nilai keagamaan.
+                  Membentuk generasi islami yang qur&apos;ani, berakhlak mulia, toleran, dan berpegang teguh pada nilai-nilai keagamaan.
                 </p>
               </div>
 

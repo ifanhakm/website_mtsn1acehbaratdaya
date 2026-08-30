@@ -4,34 +4,34 @@
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronRight, Search, Calendar, User, Tag, Clock, ArrowRight, Newspaper } from 'lucide-react'
+import { ChevronRight, Search, Calendar, User, Clock, ArrowRight, Newspaper } from 'lucide-react'
 
 // 1. Definisikan Struktur Media Upload dari Payload
 export interface Media {
-  id: string
-  url: string
-  alt?: string
+  id: string | number
+  url?: string | null
+  alt?: string | null
 }
 
 // 2. Definisikan Struktur Author (User) dari Payload
 export interface Author {
-  id: string
+  id: string | number
   email: string
-  name?: string
+  name?: string | null
 }
 
 // 3. Definisikan Struktur Post Berita Sesuai Skema Berita.ts
 export interface Post {
-  id: string
+  id: string | number
   slug: string
   title: string
   excerpt: string
   date: string
   category: 'Akademik' | 'Kesiswaan' | 'Pengumuman' | 'Prestasi'
   readTime: string
-  image: string | Media // Bisa berupa ID string atau objek Media utuh
-  author: string | Author // Bisa berupa ID string atau objek Author utuh
-  isFeatured?: boolean
+  image: string | number | Media
+  author: string | number | Author
+  isFeatured?: boolean | null
 }
 
 interface BeritaClientProps {
@@ -55,7 +55,7 @@ export default function BeritaClient({ beritaData }: BeritaClientProps) {
   }
 
   // Fungsi Pembantu: Mengambil URL Gambar dari Payload Media
-  const getImageUrl = (imageField: string | Media): string => {
+  const getImageUrl = (imageField: Post['image']): string => {
     if (!imageField) return '/logo.jpg' // Fallback ke logo jika tidak ada gambar
     if (typeof imageField === 'object' && imageField.url) {
       return imageField.url
@@ -64,7 +64,7 @@ export default function BeritaClient({ beritaData }: BeritaClientProps) {
   }
 
   // Fungsi Pembantu: Mengambil Nama Penulis dari Payload Users
-  const getAuthorName = (authorField: string | Author): string => {
+  const getAuthorName = (authorField: Post['author']): string => {
     if (!authorField) return 'Humas'
     if (typeof authorField === 'object') {
       return authorField.name || authorField.email.split('@')[0]
@@ -234,7 +234,7 @@ export default function BeritaClient({ beritaData }: BeritaClientProps) {
             <Newspaper className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-bold text-gray-800 mb-2">Berita Tidak Ditemukan</h3>
             <p className="text-sm text-gray-400 font-semibold max-w-md mx-auto">
-              Maaf, kami tidak menemukan berita dengan kata kunci "{searchQuery}". Silakan coba kata kunci lainnya.
+              Maaf, kami tidak menemukan berita dengan kata kunci &quot;{searchQuery}&quot;. Silakan coba kata kunci lainnya.
             </p>
           </div>
         ) : (

@@ -4,7 +4,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer"; 
 
 export const metadata: Metadata = {
-  title: "MTsN 1 Aceh Barat Daya",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:3000"),
+  title: {
+    default: "MTsN 1 Aceh Barat Daya",
+    template: "%s | MTsN 1 Aceh Barat Daya",
+  },
   description: "Website resmi Madrasah Tsanawiyah Negeri 1 Aceh Barat Daya, Provinsi Aceh. Unggul dalam Imtaq, Iptek, dan Berwawasan Lingkungan.",
   icons: {
     icon: "/logo.jpg",        
@@ -14,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "MTsN 1 Aceh Barat Daya",
     description: "Unggul dalam Imtaq, Iptek, dan Berwawasan Lingkungan.",
-    url: "mtsn1acehbaratdaya.sch.id", 
+    url: "/",
     siteName: "MTsN 1 Abdya",
     images: [
       {
@@ -26,6 +30,12 @@ export const metadata: Metadata = {
     ],
     locale: "id_ID",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MTsN 1 Aceh Barat Daya",
+    description: "Unggul dalam Imtaq, Iptek, dan Berwawasan Lingkungan.",
+    images: ["/logo.jpg"],
   },
 };
 

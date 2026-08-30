@@ -2,7 +2,18 @@
 import React from 'react'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-import LayananClient, { type LayananCategory } from './LayananClient'
+import LayananClient, { type LayananCategory, type LayananItem } from './LayananClient'
+
+export const revalidate = 300
+
+interface ServiceItemRecord {
+  title: string
+  description: string
+  href: string
+  isExternal?: boolean | null
+  icon: LayananItem['icon']
+  badge?: string | null
+}
 
 export default async function LayananPortalPage() {
   let dbLayanan: LayananCategory[] = []
@@ -19,15 +30,15 @@ export default async function LayananPortalPage() {
     })
 
     // 3. Petakan format database ke dalam tipe format props LayananClient
-    dbLayanan = result.docs.map((doc: any) => ({
+    dbLayanan = result.docs.map((doc) => ({
       categoryName: doc.name,
       categoryDesc: doc.description,
-      items: (doc.items || []).map((item: any) => ({
+      items: (doc.items || []).map((item: ServiceItemRecord) => ({
         title: item.title,
         description: item.description,
         href: item.href,
         isExternal: item.isExternal ?? true,
-        icon: item.icon as any,
+        icon: item.icon,
         badge: item.badge || undefined,
       }))
     }))

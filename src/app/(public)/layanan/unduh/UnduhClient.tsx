@@ -10,17 +10,16 @@ import {
   ChevronRight, 
   Users, 
   Briefcase, 
-  ShieldAlert,
-  Info
+  ShieldAlert
 } from 'lucide-react'
 
 export interface DocumentItem {
-  id: string
+  id: string | number
   title: string
   description: string
   category: 'siswa' | 'kepegawaian' | 'umum'
   fileSize: string
-  fileType: 'DOCX' | 'PDF'
+  fileType: string
   fileName: string   // Nama file fisik
   fileUrl?: string   // URL dinamis dari Supabase Storage jika ada
   badge?: string
@@ -332,7 +331,7 @@ export default function UnduhClient({ dbDocuments }: UnduhClientProps) {
 
                   {/* Deteksi Link Unduhan (Dinamis dari Supabase / Statis dari folder public) */}
                   <a
-                    href={doc.fileUrl ? doc.fileUrl : `/downloads/${doc.fileName}`}
+                    href={doc.fileUrl ? doc.fileUrl : `/documents/${doc.fileName}`}
                     download
                     className="inline-flex items-center gap-1.5 rounded-lg bg-gray-50 border border-gray-100 text-gray-600 hover:bg-brand-green hover:text-white hover:border-brand-green px-3.5 py-2.5 text-xs font-black shadow-2xs hover:shadow-md transition-all duration-300"
                   >

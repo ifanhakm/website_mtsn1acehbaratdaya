@@ -3,6 +3,8 @@ import React from 'react'
 import Link from 'next/link'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+
+export const revalidate = 300
 import { 
   Award, 
   BookOpen, 
@@ -52,6 +54,12 @@ const defaultTimeline = [
   }
 ]
 
+interface TimelineRecord {
+  tahun: string
+  judulPeristiwa: string
+  deskripsiPeristiwa: string
+}
+
 // Helper: Menentukan badge peristiwa secara dinamis
 const getBadgeText = (year: string) => {
   switch (year) {
@@ -79,7 +87,7 @@ const getTimelineIcon = (index: number) => {
 // 2. SERVER COMPONENT UTAMA
 export default async function SejarahPage() {
   let dbIntro: React.ReactNode | null = null
-  let dbTimeline: any[] = []
+  let dbTimeline: Array<{ year: string; title: string; description: string; badge: string }> = []
 
   try {
     // A. Inisialisasi Payload Local API di Sisi Server
@@ -89,7 +97,7 @@ export default async function SejarahPage() {
     const profil = await payload.findGlobal({
       slug: 'profil-sekolah',
       depth: 1,
-    }) as any
+    })
 
     // C. Parsing Intro Sejarah (sejarahPanjang)
     if (profil && profil.sejarahPanjang) {
@@ -98,21 +106,12 @@ export default async function SejarahPage() {
           if (paragraph.trim() === '') return null
           return <p key={index}>{paragraph}</p>
         })
-      } else if (profil.sejarahPanjang.root && profil.sejarahPanjang.root.children) {
-        // Jika data berupa JSON Lexical (Rich Text)
-        dbIntro = profil.sejarahPanjang.root.children.map((child: any, index: number) => {
-          if (child.type === 'paragraph' && child.children) {
-            const textContent = child.children.map((c: any) => c.text).join('')
-            return <p key={index}>{textContent}</p>
-          }
-          return null
-        })
       }
     }
 
     // D. Parsing Lini Masa (liniMasa) dari database
     if (profil && profil.liniMasa && profil.liniMasa.length > 0) {
-      dbTimeline = profil.liniMasa.map((item: any) => ({
+      dbTimeline = profil.liniMasa.map((item: TimelineRecord) => ({
         year: item.tahun,
         title: item.judulPeristiwa,
         description: item.deskripsiPeristiwa,

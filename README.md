@@ -40,11 +40,11 @@ Repositori Resmi pengembangan website **Madrasah Tsanawiyah Negeri 1 Aceh Barat 
 
 ## 🛠️ Tech Stack & Strategi Hosting
 
-* **Frontend:** Next.js 15 (App Router), React 19, TypeScript, Framer Motion.
+* **Frontend:** Next.js 16 (App Router), React 19, TypeScript.
 * **Styling:** Tailwind CSS, Lucide Icons, SCSS (untuk integrasi dashboard).
 * **Headless CMS & Local API:** Payload CMS v3 (Stable Version) — mengadopsi struktur fullstack Next.js native.
 * **Database Utama:** PostgreSQL di-hosting secara aman di **Supabase**.
-* **Penyimpanan Gambar/Media:** Supabase Storage Bucket (`media`) — mencegah hilangnya aset akibat karakteristik restart server serverless (*ephemeral file system*).
+* **Penyimpanan Gambar/Media:** Supabase Storage melalui endpoint S3-compatible. Disk lokal hanya menjadi fallback pengembangan bila kredensial S3 belum tersedia.
 
 ---
 
@@ -57,7 +57,7 @@ website_mtsn1acehbaratdaya/
 ├── public/                            # File statis publik (Logo, Favicon, PDF template)
 │   ├── logo.jpg                       # Logo resmi MTsN 1 Aceh Barat Daya
 │   ├── media/                         # Folder penyimpanan berkas media lokal (mode development)
-│   └── downloads/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
+│   └── documents/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
 │
 ├── src/
 │   ├── app/                           # Struktur Next.js App Router (Next.js 15)
@@ -133,10 +133,14 @@ Buat berkas bernama **`.env.local`** di root folder dan lengkapi kredensial Supa
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 DATABASE_URI=postgresql://postgres.[ID_PROYEK_SUPABASE]:[PASS_DB]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
 PAYLOAD_SECRET=buat-string-acak-panjang-apa-saja-untuk-pengamanan-token
+SCHOOL_EMAIL=website.mtsn1abdya@gmail.com
+RESEND_API_KEY=re_xxxxxxxxx
 SUPABASE_URL=https://[ID_PROYEK_SUPABASE].supabase.co
-SUPABASE_ANON_KEY=your-supabase-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 SUPABASE_BUCKET_NAME=media
+SUPABASE_S3_ENDPOINT=https://[ID_PROYEK_SUPABASE].storage.supabase.co/storage/v1/s3
+SUPABASE_S3_REGION=ap-southeast-1
+SUPABASE_S3_ACCESS_KEY_ID=your-s3-access-key
+SUPABASE_S3_SECRET_ACCESS_KEY=your-s3-secret-key
 ```
 
 ### 5. Menjalankan Server Pengembangan
@@ -146,6 +150,15 @@ npm run dev
 Buka browser Anda dan akses:
 *   🌐 **Website Utama:** `http://localhost:3000`
 *   🔑 **Admin Panel CMS:** `http://localhost:3000/admin`
+
+### 6. Pemeriksaan kualitas
+
+```bash
+npm run check
+npm run build
+```
+
+`npm run check` menjalankan ESLint, pemeriksaan tipe TypeScript, dan unit test. Jangan pernah commit file `.env*`; gunakan `.env.example` sebagai template.
 
 ---
 

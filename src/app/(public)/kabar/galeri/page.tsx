@@ -4,6 +4,8 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import GaleriClient, { type GaleriItem } from './GaleriClient'
 
+export const revalidate = 300
+
 export default async function KabarGaleriPage() {
   let dbGaleri: GaleriItem[] = []
 
@@ -19,7 +21,7 @@ export default async function KabarGaleriPage() {
     })
 
     // 3. Konversi format data database ke format props GaleriClient
-    dbGaleri = result.docs.map((doc: any) => {
+    dbGaleri = result.docs.map((doc) => {
       // Dapatkan URL gambar dinamis dari Supabase Storage jika media terhubung
       const imageUrl = doc.image && typeof doc.image === 'object' 
         ? (doc.image.url || null) 

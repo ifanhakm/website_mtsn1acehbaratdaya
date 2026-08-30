@@ -24,6 +24,7 @@ interface ContactForm {
   kategori: string;
   subjek: string;
   pesan: string;
+  website: string;
 }
 
 // Data FAQ (Pertanyaan yang Sering Diajukan)
@@ -40,6 +41,7 @@ export default function KontakPage() {
     kategori: "Wali Murid",
     subjek: "",
     pesan: "",
+    website: "",
   }));
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -91,6 +93,7 @@ export default function KontakPage() {
           kategori: "Wali Murid",
           subjek: "",
           pesan: "",
+          website: "",
         });
       } else {
         setErrorMessage(response.message);
@@ -270,6 +273,18 @@ export default function KontakPage() {
               ) : (
                 /* Tampilan Formulir Pesan */
                 <form onSubmit={handleSubmit} className="space-y-5">
+                  <div className="hidden" aria-hidden="true">
+                    <label htmlFor="website">Website</label>
+                    <input
+                      id="website"
+                      name="website"
+                      type="text"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={form.website}
+                      onChange={handleInputChange}
+                    />
+                  </div>
                   
                   {/* Banner Eror Kustom */}
                   {errorMessage && (
@@ -290,6 +305,7 @@ export default function KontakPage() {
                         id="nama"
                         name="nama"
                         required
+                        maxLength={100}
                         placeholder="Contoh: Muhammad Farhan"
                         value={form.nama}
                         onChange={handleInputChange}
@@ -307,6 +323,7 @@ export default function KontakPage() {
                         id="email"
                         name="email"
                         required
+                        maxLength={254}
                         placeholder="Contoh: farhan@email.com"
                         value={form.email}
                         onChange={handleInputChange}
@@ -346,6 +363,7 @@ export default function KontakPage() {
                         id="subjek"
                         name="subjek"
                         required
+                        maxLength={150}
                         placeholder="Contoh: Tanya Berkas PPDB 2027"
                         value={form.subjek}
                         onChange={handleInputChange}
@@ -364,6 +382,8 @@ export default function KontakPage() {
                       name="pesan"
                       rows={5}
                       required
+                      minLength={10}
+                      maxLength={5000}
                       placeholder="Tuliskan pertanyaan, aduan, atau masukan Anda secara jelas dan santun..."
                       value={form.pesan}
                       onChange={handleInputChange}
