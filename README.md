@@ -58,9 +58,7 @@ website_mtsn1acehbaratdaya/
 │   ├── documents/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
 │   ├── images/                        # Koleksi gambar statis
 │   └── media/                         # Folder penyimpanan berkas media lokal (mode development)
-│       ├── Fikri/
-│       ├── Logo Resmi/
-│       └── Zulkifli, S. Pd/
+│       
 │
 ├── certs/                             # Sertifikat SSL/TLS (untuk deployment)
 │
@@ -147,8 +145,6 @@ website_mtsn1acehbaratdaya/
 │       └── globals/                   # Konfigurasi global yang dapat diubah via CMS
 │           └── ProfilSekolah.ts       # Data profil sekolah (nama, alamat, kontak, dsb)
 │
-├── AGENTS.md                          # Aturan & konfigurasi custom agent Next.js
-├── CLAUDE.md                          # Konfigurasi Copilot AI assistant
 ├── components.json                    # Konfigurasi shadcn/ui & component library
 ├── Dockerfile                         # Container image untuk production deployment
 ├── eslint.config.mjs                  # Konfigurasi ESLint (linting JavaScript/TypeScript)
@@ -157,7 +153,6 @@ website_mtsn1acehbaratdaya/
 ├── next.config.ts                     # Konfigurasi Next.js (optimasi remotePattern gambar Supabase)
 ├── package.json                       # Dependensi proyek & shortcut skrip build
 ├── postcss.config.mjs                 # Konfigurasi PostCSS (untuk Tailwind CSS)
-├── rancangan-website-sekolah.md       # Dokumentasi rancangan & spesifikasi website
 ├── README.md                          # File dokumentasi ini
 ├── tailwind.config.ts                 # Desain sistem Tailwind CSS (warna, font, spacing)
 ├── tsconfig.json                      # Konfigurasi TypeScript (alias jalur @payload-config)
