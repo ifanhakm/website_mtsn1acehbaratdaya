@@ -50,7 +50,7 @@ jobs:
           context: .
           push: true
           build-args: |
-            NEXT_PUBLIC_SERVER_URL=${{ vars.NEXT_PUBLIC_SERVER_URL || 'http://43.173.7.84' }}
+            NEXT_PUBLIC_SERVER_URL=https://mtsn1acehbaratdaya.sch.id
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha

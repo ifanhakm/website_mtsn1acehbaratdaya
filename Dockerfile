@@ -7,7 +7,7 @@ RUN npm ci
 
 FROM node:22-bookworm-slim AS builder
 WORKDIR /app
-ARG NEXT_PUBLIC_SERVER_URL=http://43.173.7.84
+ARG NEXT_PUBLIC_SERVER_URL=https://mtsn1acehbaratdaya.sch.id
 ENV NEXT_TELEMETRY_DISABLED=1 \
     DATABASE_URI=postgresql://build:build@127.0.0.1:5432/build \
     PAYLOAD_SECRET=build-only-secret-not-used-at-runtime \
