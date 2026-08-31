@@ -2,7 +2,32 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 import type { NextConfig } from 'next'
 
-const remotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = []
+const isDev = process.env.NODE_ENV === 'development'
+
+const remotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = [
+  {
+    protocol: 'http',
+    hostname: 'localhost',
+    port: '3000',
+    pathname: '/**',
+  },
+  {
+    protocol: 'http',
+    hostname: '127.0.0.1',
+    port: '3000',
+    pathname: '/**',
+  },
+  {
+    protocol: 'https',
+    hostname: '**',
+    pathname: '/**',
+  },
+  {
+    protocol: 'http',
+    hostname: '**',
+    pathname: '/**',
+  },
+]
 
 for (const candidate of [process.env.SUPABASE_URL, process.env.SUPABASE_S3_ENDPOINT]) {
   if (!candidate) continue
@@ -22,9 +47,10 @@ for (const candidate of [process.env.SUPABASE_URL, process.env.SUPABASE_S3_ENDPO
 }
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  output: 'standalone', 
   images: {
     remotePatterns,
+    dangerouslyAllowLocalIP: isDev,
   },
   experimental: {
     serverActions: {

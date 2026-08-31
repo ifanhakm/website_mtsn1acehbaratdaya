@@ -3,6 +3,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { resendAdapter } from '@payloadcms/email-resend'
 import { s3Storage } from '@payloadcms/storage-s3'
 import path from 'path'
+import fs from 'fs'
 import sharp from 'sharp'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
@@ -19,6 +20,32 @@ import { cloudStorageEnabled, env } from './lib/env'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+let sslConfig: any = false
+
+if (env.DATABASE_SSL === 'true') {
+  try {
+    // Gunakan path.join dan process.cwd() agar jalurnya presisi di sistem operasi apa pun (Windows/Linux VPS)
+    const certPath = path.join(process.cwd(), 'certs', 'supabase-ca.crt')
+    
+    if (fs.existsSync(certPath)) {
+      sslConfig = {
+        rejectUnauthorized: true, 
+        ca: fs.readFileSync(certPath, 'utf8'),
+      }
+      console.log('Sistem Keamanan SSL Supabase CA Aktif & Terverifikasi!')
+    } else {
+      console.warn('File certs/supabase-ca.crt tidak ditemukan. Menggunakan SSL fallback.')
+      sslConfig = {
+        rejectUnauthorized: false,
+      }
+    }
+  } catch (error) {
+    console.error('Gagal memuat sertifikat SSL database:', error)
+    sslConfig = {
+      rejectUnauthorized: false,
+    }
+  }
+}
 
 export default buildConfig({
   serverURL: env.NEXT_PUBLIC_SERVER_URL,
@@ -69,16 +96,9 @@ export default buildConfig({
   // Hubungkan ke Supabase PostgreSQL melalui Variabel Lingkungan (.env.local)
   db: postgresAdapter({
     pool: {
-      connectionString: env.DATABASE_URI,
-      ssl:
-        env.DATABASE_SSL === 'false'
-          ? false
-          : { rejectUnauthorized: env.DATABASE_SSL === 'true' },
-      max: 4  ,
-      idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 30000,
+      connectionString: process.env.DATABASE_URI,
+      ssl: sslConfig,
     },
-    push: false,
   }),
   plugins: [
     s3Storage({
