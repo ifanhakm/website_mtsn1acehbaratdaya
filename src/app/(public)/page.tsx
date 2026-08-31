@@ -82,7 +82,7 @@ export default async function HomePage() {
   const stats = [
     { id: 1, value: "520+", label: "Siswa Aktif", icon: Users },
     { id: 2, value: "45+", label: "Guru & Tenaga Pendidik", icon: GraduationCap },
-    { id: 3, value: "18", label: "Rombongan Belajar", icon: BookOpen },
+    { id: 3, value: "16", label: "Rombongan Belajar", icon: BookOpen },
     { id: 4, value: "A (Unggul)", label: "Akreditasi Ban-SM", icon: Award },
   ]
 
@@ -140,7 +140,7 @@ export default async function HomePage() {
                 <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-gray-100 border border-gray-100 shadow-2xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img 
-                    src="fotogedung.png" 
+                    src="fotogedung.jpeg" 
                     alt="Gedung MTsN 1 Aceh Barat Daya" 
                     className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500"
                   />

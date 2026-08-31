@@ -191,9 +191,9 @@ export default function KontakPage() {
                 </div>
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-extrabold text-gray-800">Telepon & WhatsApp</h4>
-                  <p className="text-xs text-gray-500 leading-relaxed font-semibold">
+                  {/* <p className="text-xs text-gray-500 leading-relaxed font-semibold">
                     +62 811-XXXX-XXXX (Humas Madrasah)
-                  </p>
+                  </p> */}
                   <span className="text-[10px] text-gray-400 font-bold">
                     Melayani telepon & pesan singkat selama jam kerja.
                   </span>
@@ -224,7 +224,9 @@ export default function KontakPage() {
                 <div className="flex flex-col gap-1">
                   <h4 className="text-sm font-extrabold text-gray-800">Waktu Pelayanan</h4>
                   <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                    Senin - Jumat: 08.00 - 16.00 WIB
+                    Senin - Sabtu: 07.30 - 13.30 WIB
+                    <br></br>
+                    Jumat: 07.30 - 11.30 WIB
                   </p>
                   <span className="text-[10px] text-brand-green font-bold mt-1">
                     *Sabtu, Minggu & Hari Libur Nasional Tutup.

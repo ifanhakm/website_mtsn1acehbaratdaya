@@ -176,7 +176,7 @@ Gunakan alias resmi bawaan Payload CMS yaitu **`@payload-config`** (bukan `@/pay
 
 ## 👥 Kontributor & Hak Cipta
 
-* **Pengembang:** [Ifan Hakim](https://github.com/ifanhakm) (Coding Assistant & Developer)
+* **Developed by:** [Ifan Hakim](https://github.com/ifanhakm) & [Muhammad Mufti Ardani](https://github.com/muftiardani)
 * **Hak Cipta:** © 2026 MTsN 1 Aceh Barat Daya. Hak cipta dilindungi undang-undang.
 * **Lisensi:** Proyek ini dilisensikan di bawah lisensi MIT untuk kepentingan pendidikan dan pengembangan madrasah.
 
