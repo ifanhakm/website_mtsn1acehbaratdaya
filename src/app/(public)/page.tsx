@@ -1,9 +1,10 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
-export const revalidate = 300
 import { 
   ArrowRight, 
   BookOpen, 
@@ -53,6 +54,8 @@ const getImageUrl = (imageField: HomeNews['image'] | null | undefined): string =
 }
 
 export default async function HomePage() {
+  await connection()
+
   let latestNews: HomeNews[] = []
 
   try {
@@ -138,11 +141,12 @@ export default async function HomePage() {
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="absolute -inset-1.5 bg-gradient-to-tr from-brand-gold to-brand-green rounded-2xl blur opacity-30 -z-10" />
                 <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-gray-100 border border-gray-100 shadow-2xl">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src="fotogedung.jpeg" 
+                  <Image
+                    src="/fotogedung.jpeg"
                     alt="Gedung MTsN 1 Aceh Barat Daya" 
-                    className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 42vw"
+                    className="object-cover transform hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 {/* Lencana Floating */}

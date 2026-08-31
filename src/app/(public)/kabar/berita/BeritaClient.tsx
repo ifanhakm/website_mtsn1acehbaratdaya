@@ -13,14 +13,7 @@ export interface Media {
   alt?: string | null
 }
 
-// 2. Definisikan Struktur Author (User) dari Payload
-export interface Author {
-  id: string | number
-  email: string
-  name?: string | null
-}
-
-// 3. Definisikan Struktur Post Berita Sesuai Skema Berita.ts
+// 2. Definisikan Struktur Post Berita yang aman dikirim ke browser
 export interface Post {
   id: string | number
   slug: string
@@ -30,7 +23,7 @@ export interface Post {
   category: 'Akademik' | 'Kesiswaan' | 'Pengumuman' | 'Prestasi'
   readTime: string
   image: string | number | Media
-  author: string | number | Author
+  authorName: string
   isFeatured?: boolean | null
 }
 
@@ -61,15 +54,6 @@ export default function BeritaClient({ beritaData }: BeritaClientProps) {
       return imageField.url
     }
     return '/logo.jpg'
-  }
-
-  // Fungsi Pembantu: Mengambil Nama Penulis dari Payload Users
-  const getAuthorName = (authorField: Post['author']): string => {
-    if (!authorField) return 'Humas'
-    if (typeof authorField === 'object') {
-      return authorField.name || authorField.email.split('@')[0]
-    }
-    return 'Humas'
   }
 
   // LOGIKA FILTER & PENCARIAN BERITA
@@ -190,7 +174,7 @@ export default function BeritaClient({ beritaData }: BeritaClientProps) {
                   </span>
                   <span className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-brand-green" />
-                    {getAuthorName(featuredBerita.author)}
+                    {featuredBerita.authorName}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-brand-green" />

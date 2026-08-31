@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { 
   MapPin, 
-  Phone, 
   Mail, 
   Clock, 
   Send, 
@@ -58,7 +57,7 @@ export default function KontakPage() {
     },
     {
       question: "Kapan jam kerja operasional pelayanan Tata Usaha?",
-      answer: "Pelayanan administrasi Tata Usaha MTsN 1 Aceh Barat Daya buka setiap hari Senin s.d. Kamis pukul 08:00 - 15:00 WIB, dan hari Jumat pukul 08:00 - 11:30 WIB. Kantor libur pada hari Sabtu, Minggu, dan hari libur nasional.",
+      answer: "Pelayanan administrasi Tata Usaha MTsN 1 Aceh Barat Daya buka Senin s.d. Sabtu pukul 07.30 - 13.30 WIB, khusus Jumat pukul 07.30 - 11.30 WIB. Kantor libur pada hari Minggu dan hari libur nasional.",
     },
     {
       question: "Apakah alumni bisa meminta legalisir ijazah secara online?",
@@ -184,22 +183,6 @@ export default function KontakPage() {
                 </div>
               </div>
 
-              {/* Kontak Telefon */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs hover:shadow-md transition-all duration-300 flex gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-green/10 text-brand-green">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <h4 className="text-sm font-extrabold text-gray-800">Telepon & WhatsApp</h4>
-                  {/* <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                    +62 811-XXXX-XXXX (Humas Madrasah)
-                  </p> */}
-                  <span className="text-[10px] text-gray-400 font-bold">
-                    Melayani telepon & pesan singkat selama jam kerja.
-                  </span>
-                </div>
-              </div>
-
               {/* Email */}
               <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs hover:shadow-md transition-all duration-300 flex gap-4">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-green/10 text-brand-green">
@@ -225,11 +208,11 @@ export default function KontakPage() {
                   <h4 className="text-sm font-extrabold text-gray-800">Waktu Pelayanan</h4>
                   <p className="text-xs text-gray-500 leading-relaxed font-semibold">
                     Senin - Sabtu: 07.30 - 13.30 WIB
-                    <br></br>
+                    <br />
                     Jumat: 07.30 - 11.30 WIB
                   </p>
                   <span className="text-[10px] text-brand-green font-bold mt-1">
-                    *Sabtu, Minggu & Hari Libur Nasional Tutup.
+                    *Minggu & Hari Libur Nasional Tutup.
                   </span>
                 </div>
               </div>

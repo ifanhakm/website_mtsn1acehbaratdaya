@@ -1,8 +1,7 @@
 import type { MetadataRoute } from 'next'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-
-export const revalidate = 3600
 
 const staticRoutes = [
   '',
@@ -17,6 +16,8 @@ const staticRoutes = [
 ]
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await connection()
+
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
   const routes: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,

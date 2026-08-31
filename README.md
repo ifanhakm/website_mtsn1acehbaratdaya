@@ -56,9 +56,10 @@ Berikut adalah peta struktur folder dan berkas dalam proyek ini:
 website_mtsn1acehbaratdaya/
 ├── public/                            # File statis publik (Logo, Favicon, PDF template)
 │   ├── documents/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
-│   ├── images/                        # Koleksi gambar statis
-│   └── media/                         # Folder penyimpanan berkas media lokal (mode development)
-│       
+│   ├── media/                         # Folder penyimpanan berkas media lokal (mode development)
+│   ├── fotogedung.jpeg                # Foto gedung pada halaman utama
+│   └── logo.jpg                       # Logo resmi madrasah
+│
 │
 ├── certs/                             # Sertifikat SSL/TLS (untuk deployment)
 │
@@ -71,7 +72,7 @@ website_mtsn1acehbaratdaya/
 │   ├── payload-types.ts               # Generated types dari Payload CMS
 │   ├── payload.config.ts              # Berkas konfigurasi utama Payload CMS v3
 │   │
-│   ├── app/                           # Struktur Next.js App Router (Next.js 15)
+│   ├── app/                           # Struktur Next.js 16 App Router
 │   │   ├── (public)/                  # Halaman publik pengunjung website (Layout Tradisional)
 │   │   │   ├── globals.css            # CSS global untuk halaman publik
 │   │   │   ├── layout.tsx             # Layout Publik (Integrasi Navbar, Footer, suppressHydration)
@@ -85,14 +86,14 @@ website_mtsn1acehbaratdaya/
 │   │   │   │       ├── page.tsx       # Server Component: Penarikan data staf dari Supabase
 │   │   │   │       └── StafClient.tsx # Client Component: Filter, search, dan grid portrait 3:4
 │   │   │   ├── kabar/
-│   │   │   │   └── berita/
-│   │   │   │       ├── BeritaClient.tsx # Client Component: Daftar berita dengan paginasi
-│   │   │   │       ├── page.tsx       # Server Component: Pusat Dokumentasi & Berita
-│   │   │   │       └── [slug]/
-│   │   │   │           └── page.tsx   # Detail halaman berita individual
-│   │   │   ├── galeri/
-│   │   │   │   ├── GaleriClient.tsx   # Client Component: Grid galeri foto dengan filter
-│   │   │   │   └── page.tsx           # Galeri foto kegiatan sekolah
+│   │   │   │   ├── berita/
+│   │   │   │   │   ├── BeritaClient.tsx # Client Component: Daftar dan filter berita
+│   │   │   │   │   ├── page.tsx       # Server Component: Pusat Dokumentasi & Berita
+│   │   │   │   │   └── [slug]/page.tsx # Detail halaman berita individual
+│   │   │   │   └── galeri/
+│   │   │   │       ├── GaleriClient.tsx # Client Component: Grid galeri foto dengan filter
+│   │   │   │       └── page.tsx       # Galeri foto kegiatan sekolah
+│   │   │   ├── health/route.ts        # Liveness endpoint untuk container
 │   │   │   ├── layanan/               # Portal Layanan Terintegrasi
 │   │   │   │   ├── LayananClient.tsx  # Client Component: Daftar layanan terpadu
 │   │   │   │   ├── page.tsx           # Server Component: Portal layanan utama
@@ -154,7 +155,6 @@ website_mtsn1acehbaratdaya/
 ├── package.json                       # Dependensi proyek & shortcut skrip build
 ├── postcss.config.mjs                 # Konfigurasi PostCSS (untuk Tailwind CSS)
 ├── README.md                          # File dokumentasi ini
-├── tailwind.config.ts                 # Desain sistem Tailwind CSS (warna, font, spacing)
 ├── tsconfig.json                      # Konfigurasi TypeScript (alias jalur @payload-config)
 └── vitest.config.ts                   # Konfigurasi Vitest untuk unit testing
 ```

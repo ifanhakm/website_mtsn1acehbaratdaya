@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
-import { Mail, MapPin, Phone, Award } from "lucide-react";
+import { Mail, MapPin, Award } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -159,10 +159,6 @@ export default function Footer() {
                 <span className="leading-relaxed">
                   Jl. Pendidikan No. 56, Desa Pantai Perak, Kec. Susoh, Kab. Aceh Barat Daya, Prov. Aceh.
                 </span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-brand-green shrink-0" />
-                {/* <span>+62 811-XXXX-XXXX (Humas)</span> */}
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="w-4 h-4 text-brand-green shrink-0" />

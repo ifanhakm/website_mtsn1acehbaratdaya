@@ -4,43 +4,47 @@ import type { NextConfig } from 'next'
 
 const isDev = process.env.NODE_ENV === 'development'
 
-const remotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = [
-  {
-    protocol: 'http',
-    hostname: 'localhost',
-    port: '3000',
-    pathname: '/**',
-  },
-  {
-    protocol: 'http',
-    hostname: '127.0.0.1',
-    port: '3000',
-    pathname: '/**',
-  },
-  {
-    protocol: 'https',
-    hostname: '**',
-    pathname: '/**',
-  },
-  {
-    protocol: 'http',
-    hostname: '**',
-    pathname: '/**',
-  },
-]
+const remotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = []
 
-for (const candidate of [process.env.SUPABASE_URL, process.env.SUPABASE_S3_ENDPOINT]) {
+if (isDev) {
+  remotePatterns.push(
+    {
+      protocol: 'http',
+      hostname: 'localhost',
+      port: '3000',
+      pathname: '/**',
+    },
+    {
+      protocol: 'http',
+      hostname: '127.0.0.1',
+      port: '3000',
+      pathname: '/**',
+    },
+  )
+}
+
+for (const candidate of [
+  process.env.NEXT_PUBLIC_SERVER_URL,
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_S3_ENDPOINT,
+]) {
   if (!candidate) continue
 
   try {
     const url = new URL(candidate)
-    remotePatterns.push({
-      protocol: 'https',
+    if (url.protocol !== 'http:' && url.protocol !== 'https:') continue
+
+    const pattern = {
+      protocol: url.protocol.slice(0, -1) as 'http' | 'https',
       hostname: url.hostname,
-      port: '',
+      port: url.port,
       pathname: '/**',
       search: '',
-    })
+    }
+
+    if (!remotePatterns.some((existing) => JSON.stringify(existing) === JSON.stringify(pattern))) {
+      remotePatterns.push(pattern)
+    }
   } catch {
     // Environment validation in Payload provides the actionable startup error.
   }

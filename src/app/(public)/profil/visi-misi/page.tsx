@@ -1,10 +1,10 @@
 // Path: src/app/(public)/profil/visi-misi/page.tsx
 import React from 'react'
 import Link from 'next/link'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
-export const revalidate = 300
 import { 
   Award, 
   BookOpen, 
@@ -112,6 +112,8 @@ const getMisiColorAndCategory = (index: number) => {
 }
 
 export default async function VisiMisiPage() {
+  await connection()
+
   let dbVisi = ""
   let dbMisi: typeof defaultMisiData = []
   let dbTujuan: string[] = []

@@ -20,7 +20,7 @@ import { cloudStorageEnabled, env } from './lib/env'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-let sslConfig: any = false
+let sslConfig: false | { rejectUnauthorized: boolean; ca?: string } = false
 
 if (env.DATABASE_SSL === 'true') {
   try {

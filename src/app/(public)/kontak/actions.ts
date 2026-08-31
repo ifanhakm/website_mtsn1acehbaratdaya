@@ -3,6 +3,7 @@
 import { headers } from 'next/headers'
 import { Resend } from 'resend'
 import { checkContactRateLimit, contactSchema, escapeHtml } from '@/lib/contact'
+import { env } from '@/lib/env'
 
 interface ContactSubmitState {
   success: boolean
@@ -31,8 +32,7 @@ export async function sendContactEmail(input: unknown): Promise<ContactSubmitSta
     }
   }
 
-  const apiKey = process.env.RESEND_API_KEY
-  const schoolEmail = process.env.SCHOOL_EMAIL || 'website.mtsn1abdya@gmail.com'
+  const apiKey = env.RESEND_API_KEY
 
   if (!apiKey) {
     console.error('RESEND_API_KEY belum dikonfigurasi')
@@ -52,8 +52,8 @@ export async function sendContactEmail(input: unknown): Promise<ContactSubmitSta
   try {
     const resend = new Resend(apiKey)
     const { error } = await resend.emails.send({
-      from: 'Website MTsN 1 ABDYA <onboarding@resend.dev>',
-      to: schoolEmail,
+      from: `Website MTsN 1 ABDYA <${env.RESEND_FROM_EMAIL}>`,
+      to: env.SCHOOL_EMAIL,
       replyTo: form.email,
       subject: `[Hubungi Kami] ${form.subjek} - ${form.kategori}`,
       html: `
