@@ -55,15 +55,31 @@ Berikut adalah peta struktur folder dan berkas dalam proyek ini:
 ```text
 website_mtsn1acehbaratdaya/
 ├── public/                            # File statis publik (Logo, Favicon, PDF template)
-│   ├── logo.jpg                       # Logo resmi MTsN 1 Aceh Barat Daya
-│   ├── media/                         # Folder penyimpanan berkas media lokal (mode development)
-│   └── documents/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
+│   ├── documents/                     # Template dokumen resmi (.docx, .xlsx, .pdf)
+│   ├── images/                        # Koleksi gambar statis
+│   └── media/                         # Folder penyimpanan berkas media lokal (mode development)
+│       ├── Fikri/
+│       ├── Logo Resmi/
+│       └── Zulkifli, S. Pd/
+│
+├── certs/                             # Sertifikat SSL/TLS (untuk deployment)
+│
+├── deploy/                            # Konfigurasi deployment & Docker
+│   ├── Caddyfile                      # Konfigurasi Caddy reverse proxy
+│   ├── compose.yml                    # Docker Compose untuk lingkungan production
+│   └── README.md                      # Panduan deployment
 │
 ├── src/
+│   ├── payload-types.ts               # Generated types dari Payload CMS
+│   ├── payload.config.ts              # Berkas konfigurasi utama Payload CMS v3
+│   │
 │   ├── app/                           # Struktur Next.js App Router (Next.js 15)
 │   │   ├── (public)/                  # Halaman publik pengunjung website (Layout Tradisional)
-│   │   │   ├── page.tsx               # Landing Page Utama (Homepage)
+│   │   │   ├── globals.css            # CSS global untuk halaman publik
 │   │   │   ├── layout.tsx             # Layout Publik (Integrasi Navbar, Footer, suppressHydration)
+│   │   │   ├── page.tsx               # Landing Page Utama (Homepage)
+│   │   │   ├── robots.ts              # Konfigurasi robots.txt
+│   │   │   ├── sitemap.ts             # Konfigurasi sitemap.xml
 │   │   │   ├── profil/
 │   │   │   │   ├── sejarah/page.tsx   # Sejarah berdirinya madrasah sejak 1969
 │   │   │   │   ├── visi-misi/page.tsx # Visi, misi, dan pilar komitmen
@@ -71,42 +87,81 @@ website_mtsn1acehbaratdaya/
 │   │   │   │       ├── page.tsx       # Server Component: Penarikan data staf dari Supabase
 │   │   │   │       └── StafClient.tsx # Client Component: Filter, search, dan grid portrait 3:4
 │   │   │   ├── kabar/
-│   │   │   │   └── berita/            # Pusat Dokumentasi & Berita Madrasah
+│   │   │   │   └── berita/
+│   │   │   │       ├── BeritaClient.tsx # Client Component: Daftar berita dengan paginasi
+│   │   │   │       ├── page.tsx       # Server Component: Pusat Dokumentasi & Berita
+│   │   │   │       └── [slug]/
+│   │   │   │           └── page.tsx   # Detail halaman berita individual
+│   │   │   ├── galeri/
+│   │   │   │   ├── GaleriClient.tsx   # Client Component: Grid galeri foto dengan filter
+│   │   │   │   └── page.tsx           # Galeri foto kegiatan sekolah
 │   │   │   ├── layanan/               # Portal Layanan Terintegrasi
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── LayananClient.tsx
-│   │   │   ├── unduh/                 # Download Center (DOCX, PDF, XLSX)
-│   │   │   │   ├── page.tsx
-│   │   │   │   └── UnduhClient.tsx
-│   │   │   └── kontak/page.tsx        # Kontak madrasah (Alamat, Maps Embed, Form Kirim Pesan)
+│   │   │   │   ├── LayananClient.tsx  # Client Component: Daftar layanan terpadu
+│   │   │   │   ├── page.tsx           # Server Component: Portal layanan utama
+│   │   │   │   └── unduh/             # Download Center (DOCX, PDF, XLSX)
+│   │   │   │       ├── UnduhClient.tsx # Client Component: Filter & download dokumen
+│   │   │   │       └── page.tsx       # Halaman unduhan dokumen resmi
+│   │   │   └── kontak/
+│   │   │       ├── actions.ts         # Server Actions untuk form kontak
+│   │   │       └── page.tsx           # Kontak madrasah (Alamat, Maps Embed, Form Kirim Pesan)
 │   │   │
 │   │   └── (payload)/                 # Area Sistem Kontrol CMS Admin
+│   │       ├── custom-admin.scss      # Custom styling untuk admin panel
+│   │       ├── importMap.ts           # Peta komponen kustom Payload
+│   │       ├── layout.tsx             # Layout panel kontrol CMS
 │   │       ├── admin/
-│   │       │   ├── [[...segments]]/page.tsx
-│   │       │   └── importMap.js       # Peta indeks komponen kustom Payload
-│   │       ├── api/[...slug]/route.ts # REST API & GraphQL Endpoint dari Payload
-│   │       └── layout.tsx             # Layout panel kontrol CMS
+│   │       │   ├── importMap.js       # Peta indeks komponen kustom Payload (legacy)
+│   │       │   └── [[...segments]]/
+│   │       │       ├── not-found.tsx  # Halaman 404 admin
+│   │       │       └── page.tsx       # Dashboard admin CMS
+│   │       └── api/
+│   │           └── [...slug]/
+│   │               └── route.ts       # REST API & GraphQL Endpoint dari Payload
 │   │
 │   ├── components/                    # Komponen UI Bersama yang Reusable
+│   │   ├── CmsLogo.tsx                # Komponen logo kustom untuk panel kontrol
 │   │   ├── Navbar.tsx                 # Navigasi sticky responsif maksimal 2 level dropdown
 │   │   ├── Footer.tsx                 # Informasi penutup, alamat, dan pranala luar
-│   │   └── CmsLogo.tsx                # Komponen logo kustom cadangan untuk panel kontrol
+│   │   └── ui/                        # Shadcn/ui & komponen UI dasar
+│   │       ├── button.tsx
+│   │       ├── card.tsx
+│   │       ├── dialog.tsx
+│   │       ├── dropdown-menu.tsx
+│   │       ├── navigation-menu.tsx
+│   │       └── sheet.tsx
+│   │
+│   ├── lib/                           # Utility functions & helper modules
+│   │   ├── contact.test.ts            # Unit tests untuk contact form
+│   │   ├── contact.ts                 # Utility functions untuk form kontak
+│   │   ├── env.ts                     # Validasi & parsing environment variables
+│   │   └── utils.ts                   # General utility functions (classnames, etc)
 │   │
 │   └── cms/                           # Skema Koleksi Konten Payload CMS
-│       └── collections/
-│           ├── Berita.ts              # Schema artikel, slug generator, cover image
-│           ├── Staf.ts                # Schema nama, nip, jabatan, foto 3:4, urutan
-│           ├── Dokumen.ts             # Schema arsip dokumen unduhan (.docx, .xlsx)
-│           ├── Galeri.ts              # Schema dokumentasi foto kegiatan sekolah
-│           ├── KategoriLayanan.ts     # Schema kategorisasi menu layanan terpadu
-│           └── Media.ts               # Schema upload aset gambar ke Supabase Storage
+│       ├── collections/               # Definisi koleksi data
+│       │   ├── Berita.ts              # Schema artikel, slug generator, cover image
+│       │   ├── Dokumen.ts             # Schema arsip dokumen unduhan (.docx, .xlsx)
+│       │   ├── Galeri.ts              # Schema dokumentasi foto kegiatan sekolah
+│       │   ├── KategoriLayanan.ts     # Schema kategorisasi menu layanan terpadu
+│       │   ├── Media.ts               # Schema upload aset gambar ke Supabase Storage
+│       │   └── Staf.ts                # Schema nama, nip, jabatan, foto 3:4, urutan
+│       └── globals/                   # Konfigurasi global yang dapat diubah via CMS
+│           └── ProfilSekolah.ts       # Data profil sekolah (nama, alamat, kontak, dsb)
 │
-├── src/payload.config.ts              # Berkas konfigurasi utama Payload CMS v3
+├── AGENTS.md                          # Aturan & konfigurasi custom agent Next.js
+├── CLAUDE.md                          # Konfigurasi Copilot AI assistant
+├── components.json                    # Konfigurasi shadcn/ui & component library
+├── Dockerfile                         # Container image untuk production deployment
+├── eslint.config.mjs                  # Konfigurasi ESLint (linting JavaScript/TypeScript)
+├── LICENSE                            # Lisensi proyek (MIT)
+├── next-env.d.ts                      # TypeScript declarations untuk Next.js
 ├── next.config.ts                     # Konfigurasi Next.js (optimasi remotePattern gambar Supabase)
+├── package.json                       # Dependensi proyek & shortcut skrip build
+├── postcss.config.mjs                 # Konfigurasi PostCSS (untuk Tailwind CSS)
+├── rancangan-website-sekolah.md       # Dokumentasi rancangan & spesifikasi website
+├── README.md                          # File dokumentasi ini
 ├── tailwind.config.ts                 # Desain sistem Tailwind CSS (warna, font, spacing)
 ├── tsconfig.json                      # Konfigurasi TypeScript (alias jalur @payload-config)
-├── package.json                       # Dependensi proyek & shortcut skrip build
-└── .env.local                         # Kredensial lingkungan lokal (rahasia, tidak di-push ke git)
+└── vitest.config.ts                   # Konfigurasi Vitest untuk unit testing
 ```
 
 ---
