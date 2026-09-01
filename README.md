@@ -1,12 +1,14 @@
 # 🕌 Website Resmi MTsN 1 Aceh Barat Daya
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
-[![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.x_Stable-000000?style=for-the-badge&logo=payload)](https://payloadcms.com/)
+[![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.88_Stable-000000?style=for-the-badge&logo=payload)](https://payloadcms.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-316192?style=for-the-badge&logo=postgresql)](https://supabase.com/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
 Repositori Resmi pengembangan website **Madrasah Tsanawiyah Negeri 1 Aceh Barat Daya** (MTsN 1 Abdya), salah satu **Madrasah Inovasi** terkemuka di Provinsi Aceh. Proyek ini dibangun ulang dengan arsitektur modern berorientasi masa depan yang bersih, sangat cepat, responsif mobile-first, serta ramah tata kelola bagi tim Humas dan Tata Usaha sekolah.
+
+Akses secara online melalui: **[https://mtsn1acehbaratdaya.sch.id/](https://mtsn1acehbaratdaya.sch.id/)**
 
 ---
 
