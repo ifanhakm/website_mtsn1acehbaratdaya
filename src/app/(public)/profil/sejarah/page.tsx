@@ -1,10 +1,10 @@
 // Path: src/app/(public)/profil/sejarah/page.tsx
 import React from 'react'
 import Link from 'next/link'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 
-export const revalidate = 300
 import { 
   Award, 
   BookOpen, 
@@ -86,6 +86,8 @@ const getTimelineIcon = (index: number) => {
 
 // 2. SERVER COMPONENT UTAMA
 export default async function SejarahPage() {
+  await connection()
+
   let dbIntro: React.ReactNode | null = null
   let dbTimeline: Array<{ year: string; title: string; description: string; badge: string }> = []
 

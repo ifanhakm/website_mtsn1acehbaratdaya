@@ -1,12 +1,13 @@
 // Path: src/app/(public)/kabar/galeri/page.tsx
 import React from 'react'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import GaleriClient, { type GaleriItem } from './GaleriClient'
 
-export const revalidate = 300
-
 export default async function KabarGaleriPage() {
+  await connection()
+
   let dbGaleri: GaleriItem[] = []
 
   try {

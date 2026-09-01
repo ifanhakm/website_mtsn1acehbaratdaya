@@ -1,10 +1,9 @@
 // Path: src/app/(public)/layanan/page.tsx
 import React from 'react'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import LayananClient, { type LayananCategory, type LayananItem } from './LayananClient'
-
-export const revalidate = 300
 
 interface ServiceItemRecord {
   title: string
@@ -16,6 +15,8 @@ interface ServiceItemRecord {
 }
 
 export default async function LayananPortalPage() {
+  await connection()
+
   let dbLayanan: LayananCategory[] = []
 
   try {

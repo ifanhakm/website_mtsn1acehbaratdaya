@@ -7,7 +7,7 @@ RUN npm ci
 
 FROM node:22-bookworm-slim AS builder
 WORKDIR /app
-ARG NEXT_PUBLIC_SERVER_URL=http://43.173.7.84
+ARG NEXT_PUBLIC_SERVER_URL=https://mtsn1acehbaratdaya.sch.id
 ENV NEXT_TELEMETRY_DISABLED=1 \
     DATABASE_URI=postgresql://build:build@127.0.0.1:5432/build \
     PAYLOAD_SECRET=build-only-secret-not-used-at-runtime \
@@ -36,6 +36,6 @@ USER nextjs
 EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
-  CMD ["node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+  CMD ["node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
 
 CMD ["node", "server.js"]

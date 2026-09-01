@@ -7,6 +7,7 @@ const serverEnvSchema = z.object({
   DATABASE_SSL: z.enum(['true', 'require', 'false']).default('true'),
   RESEND_API_KEY: z.string().min(1).optional(),
   RESEND_FROM_EMAIL: z.email().default('onboarding@resend.dev'),
+  SCHOOL_EMAIL: z.email().default('website.mtsn1abdya@gmail.com'),
   SUPABASE_URL: z.url().optional(),
   SUPABASE_BUCKET_NAME: z.string().min(1).optional(),
   SUPABASE_S3_ENDPOINT: z.url().optional(),

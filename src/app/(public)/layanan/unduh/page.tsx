@@ -1,11 +1,10 @@
 // Path: src/app/(public)/layanan/unduh/page.tsx
 import React from 'react'
+import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import UnduhClient, { type DocumentItem } from './UnduhClient'
 import { z } from 'zod'
-
-export const revalidate = 300
 
 const documentRecordSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -19,6 +18,8 @@ const documentRecordSchema = z.object({
 })
 
 export default async function DownloadCenterPage() {
+  await connection()
+
   let dbDocuments: DocumentItem[] = []
 
   try {
