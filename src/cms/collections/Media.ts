@@ -1,10 +1,11 @@
+// Path: src/cms/collections/Media.ts
 import { CollectionConfig } from 'payload';
 
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: {
     singular: 'Media',
-    plural: 'Pusat Media',
+    plural: 'Pusat Media', // Menyesuaikan label
   },
   access: {
     read: () => true, // Gambar/dokumen bebas diakses publik lewat URL
@@ -16,29 +17,30 @@ export const Media: CollectionConfig = {
   upload: {
     staticDir: 'public/media', // Lokasi penyimpanan lokal fisik file yang diunggah
     // Catatan: di Payload v3 tidak ada opsi staticURL; file dilayani otomatis lewat /api/media/file/<namafile>
-    imageSizes: [
-      {
-        name: 'thumbnail',
-        width: 400,
-        height: 300,
-        position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 80 } },
+    
+    // SINKRONISASI KOMPRESI WEBP LANGSUNG DI MEMORI (RAM)
+    formatOptions: {
+      format: 'webp',
+      options: {
+        quality: 80, // Kompresi ideal: sangat ringan di storage, tetap tajam di mata pengunjung
       },
-      {
-        name: 'card',
-        width: 768,
-        height: 432, // Rasio 16:9 ideal untuk kartu berita
-        position: 'centre',
-        formatOptions: { format: 'webp', options: { quality: 85 } },
-      },
-      {
-        name: 'tablet',
-        width: 1024,
-        position: 'centre',
-      },
-    ],
-    adminThumbnail: 'thumbnail', // Gunakan thumbnail berukuran kecil saat memuat gambar di panel admin
-    mimeTypes: ['image/*'],      // Membatasi pustaka media ini hanya untuk format gambar
+    },
+
+    // PEMBATAS DIMENSI MAKSIMAL GAMBAR
+    resizeOptions: {
+      width: 1200,
+      height: 1200,
+      fit: 'inside', // Menjaga rasio foto asli agar tetap proporsional (tidak gepeng)
+      withoutEnlargement: true, // Jangan diperbesar jika ukuran aslinya sudah di bawah 1200px
+    },
+
+    // BEBAS DUPLIKASI UKURAN
+    // Dikosongkan agar Payload tidak membuat duplikat file berukuran kecil lainnya di cloud.
+    imageSizes: [],
+
+    // PRATINJAU ADMIN OTOMATIS
+
+    mimeTypes: ['image/*'], // Membatasi pustaka media ini hanya untuk format gambar
   },
   fields: [
     {

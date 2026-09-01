@@ -17,6 +17,7 @@ export default async function DirektoriStafPage() {
       sort: 'urutan',
       depth: 1,
       overrideAccess: false,
+      limit: 60,
     })
     staffData = result.docs.map((member) => ({
       id: member.id,

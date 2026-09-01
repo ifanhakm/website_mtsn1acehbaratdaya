@@ -1,3 +1,4 @@
+// Path: src/app/(public)/kontak/actions.ts
 'use server'
 
 import { headers } from 'next/headers'
@@ -32,7 +33,8 @@ export async function sendContactEmail(input: unknown): Promise<ContactSubmitSta
   }
 
   const apiKey = process.env.RESEND_API_KEY
-  const schoolEmail = process.env.SCHOOL_EMAIL || 'website.mtsn1abdya@gmail.com'
+  // 🌟 PERBAIKAN 1: Menggunakan fallback default ke email Gmail asli sekolah Anda yang baru
+  const schoolEmail = process.env.SCHOOL_EMAIL || 'mtsn1acehbaratdaya@gmail.com'
 
   if (!apiKey) {
     console.error('RESEND_API_KEY belum dikonfigurasi')
@@ -52,7 +54,9 @@ export async function sendContactEmail(input: unknown): Promise<ContactSubmitSta
   try {
     const resend = new Resend(apiKey)
     const { error } = await resend.emails.send({
-      from: 'Website MTsN 1 ABDYA <onboarding@resend.dev>',
+      // 🌟 PERBAIKAN 2: Menggunakan email virtual pengirim resmi sekolah dari .env jika ada.
+      // Jika di localhost (variabel belum diisi), otomatis fallback aman menggunakan onboarding@resend.dev!
+      from: process.env.RESEND_FROM_EMAIL || 'Website MTsN 1 ABDYA <onboarding@resend.dev>',
       to: schoolEmail,
       replyTo: form.email,
       subject: `[Hubungi Kami] ${form.subjek} - ${form.kategori}`,

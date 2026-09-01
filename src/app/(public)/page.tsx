@@ -86,7 +86,7 @@ export default async function HomePage() {
     { id: 4, value: "A (Unggul)", label: "Akreditasi Ban-SM", icon: Award },
   ]
 
-  const kepsekFotoUrl = "/media/kepsek-1024x1536.jpg";
+  const kepsekFotoUrl = "/kepsek.jpg";
 
   return (
     <div className="flex flex-col min-h-screen bg-white">

@@ -17,8 +17,9 @@
 
 # production
 /build
-/public/downloads
-rancangan-website-sekolah.md
+public/documents
+public/images
+public/media
 AGENTS.md
 CLAUDE.md
 
