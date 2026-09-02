@@ -83,6 +83,24 @@ jobs:
           ssh "$VPS_USER@$VPS_HOST" 'mkdir -p /opt/mtsn1acehbaratdaya'
           scp deploy/compose.yml deploy/Caddyfile "$VPS_USER@$VPS_HOST:/opt/mtsn1acehbaratdaya/"
 
+      - name: Configure production migration settings
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: |
+          ssh "$VPS_USER@$VPS_HOST" '
+            set -eu
+            cd /opt/mtsn1acehbaratdaya
+            test -f .env.production
+            temp_file=$(mktemp .env.production.XXXXXX)
+            trap "rm -f $temp_file" EXIT
+            grep -vE "^(ALLOW_DEV_SCHEMA_PUSH|RUN_DATABASE_MIGRATIONS)=" .env.production > "$temp_file"
+            printf "\nALLOW_DEV_SCHEMA_PUSH=false\nRUN_DATABASE_MIGRATIONS=true\n" >> "$temp_file"
+            chmod --reference=.env.production "$temp_file"
+            mv "$temp_file" .env.production
+            trap - EXIT
+          '
+
       - name: Deploy production image
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
