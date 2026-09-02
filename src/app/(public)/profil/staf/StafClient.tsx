@@ -20,6 +20,15 @@ export interface StaffMember {
   urutan: number
 }
 
+function getStaffPhotoUrl(foto: StaffMember['foto']): string | null {
+  if (!foto) return null
+  if (typeof foto === 'object' && foto.url) return foto.url
+  if (typeof foto === 'string' && (foto.startsWith('http://') || foto.startsWith('https://') || foto.startsWith('/'))) {
+    return foto
+  }
+  return null
+}
+
 export default function DirektoriStafClient({ staffData }: { staffData: StaffMember[] }) {
   // State untuk Filter Kategori & Pencarian
   const [activeTab, setActiveTab] = useState<'semua' | 'guru' | 'staf'>('semua')
@@ -48,6 +57,8 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
       return matchesTab && matchesSearch
     })
   }, [activeTab, searchQuery, staffData, kepalaMadrasah])
+
+  const kepsekPhotoUrl = kepalaMadrasah ? getStaffPhotoUrl(kepalaMadrasah.foto) : null
 
   return (
     <div className="min-h-screen bg-gray-50/50">
@@ -95,10 +106,10 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
               {/* Foto Kepala Madrasah - DISET KE 3:4 PORTRAIT DENGAN OBJECT-TOP */}
               <div className="md:col-span-5 bg-gray-50 flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
                 <div className="relative overflow-hidden flex aspect-[3/4] w-full max-w-[240px] items-center justify-center rounded-2xl bg-brand-green/10 border-4 border-white shadow-lg text-brand-green">
-                  {kepalaMadrasah.foto && typeof kepalaMadrasah.foto === 'object' && kepalaMadrasah.foto.url ? (
+                  {kepsekPhotoUrl ? (
                     <Image
-                      src={kepalaMadrasah.foto.url}
-                      alt={kepalaMadrasah.foto.alt || kepalaMadrasah.namaLengkap}
+                      src={kepsekPhotoUrl}
+                      alt={typeof kepalaMadrasah.foto === 'object' && kepalaMadrasah.foto?.alt ? kepalaMadrasah.foto.alt : kepalaMadrasah.namaLengkap}
                       fill
                       priority
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -209,53 +220,56 @@ export default function DirektoriStafClient({ staffData }: { staffData: StaffMem
            ========================================== */}
         {filteredStaff.length > 0 ? (
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mt-10">
-            {filteredStaff.map((member) => (
-              <div
-                key={member.id}
-                className="group relative bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:border-brand-green/20 transition-all duration-300 flex flex-col h-full justify-between"
-              >
-                {/* 1. Bagian Atas: Foto Portrait 3:4 dengan 'object-top' agar kepala tidak terpotong */}
-                <div className="relative aspect-[3/4] w-full bg-gray-50 overflow-hidden">
-                  {member.foto && typeof member.foto === 'object' && member.foto.url ? (
-                    <Image
-                      src={member.foto.url}
-                      alt={member.foto.alt || member.namaLengkap}
-                      fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-gray-400">
-                      <User className="w-16 h-16 stroke-[1.2] mb-2 text-brand-green/25" />
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Foto Kosong</span>
-                    </div>
-                  )}
-
-                  {/* Tag Kategori Kepegawaian di Atas Foto */}
-                  <span className="absolute top-4 right-4 inline-block text-[9px] font-extrabold uppercase tracking-wider text-brand-green bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full shadow-xs border border-gray-100/30">
-                    {member.jenisPtk === 'guru' ? 'Guru' : 'Staf TU'}
-                  </span>
-                </div>
-
-                {/* 2. Bagian Bawah: Informasi Identitas */}
-                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
-                  <div className="space-y-1.5">
-                    <h3 className="font-extrabold text-gray-800 leading-snug group-hover:text-brand-green transition-colors duration-300">
-                      {member.namaLengkap}
-                    </h3>
-                    <p className="text-xs text-gray-400 font-bold">
-                      {member.jabatan}
-                    </p>
-                    {member.nip && (
-                      <p className="text-[10px] text-gray-500 font-semibold bg-gray-50 border border-gray-100/40 px-2 py-0.5 rounded w-fit">
-                        NIP. {member.nip}
-                      </p>
+            {filteredStaff.map((member) => {
+              const photoUrl = getStaffPhotoUrl(member.foto)
+              return (
+                <div
+                  key={member.id}
+                  className="group relative bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-xs hover:shadow-xl hover:border-brand-green/20 transition-all duration-300 flex flex-col h-full justify-between"
+                >
+                  {/* 1. Bagian Atas: Foto Portrait 3:4 dengan 'object-top' agar kepala tidak terpotong */}
+                  <div className="relative aspect-[3/4] w-full bg-gray-50 overflow-hidden">
+                    {photoUrl ? (
+                      <Image
+                        src={photoUrl}
+                        alt={typeof member.foto === 'object' && member.foto?.alt ? member.foto.alt : member.namaLengkap}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-gray-400">
+                        <User className="w-16 h-16 stroke-[1.2] mb-2 text-brand-green/25" />
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Foto Kosong</span>
+                      </div>
                     )}
-                  </div>
-                </div>
 
-              </div>
-            ))}
+                    {/* Tag Kategori Kepegawaian di Atas Foto */}
+                    <span className="absolute top-4 right-4 inline-block text-[9px] font-extrabold uppercase tracking-wider text-brand-green bg-white/95 backdrop-blur-xs px-2.5 py-1 rounded-full shadow-xs border border-gray-100/30">
+                      {member.jenisPtk === 'guru' ? 'Guru' : 'Staf TU'}
+                    </span>
+                  </div>
+
+                  {/* 2. Bagian Bawah: Informasi Identitas */}
+                  <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                    <div className="space-y-1.5">
+                      <h3 className="font-extrabold text-gray-800 leading-snug group-hover:text-brand-green transition-colors duration-300">
+                        {member.namaLengkap}
+                      </h3>
+                      <p className="text-xs text-gray-400 font-bold">
+                        {member.jabatan}
+                      </p>
+                      {member.nip && (
+                        <p className="text-[10px] text-gray-500 font-semibold bg-gray-50 border border-gray-100/40 px-2 py-0.5 rounded w-fit">
+                          NIP. {member.nip}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                </div>
+              )
+            })}
           </div>
         ) : (
           /* State Kosong (Search tidak ditemukan) */

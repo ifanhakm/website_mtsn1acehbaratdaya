@@ -87,8 +87,37 @@ export default buildConfig({
       enabled: cloudStorageEnabled,
       bucket: env.SUPABASE_BUCKET_NAME || 'local-development',
       collections: {
-        media: { prefix: 'media' },
-        dokumen: { prefix: 'documents' },
+        media: {
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => {
+            const endpoint = env.SUPABASE_S3_ENDPOINT || ''
+            const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
+              ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
+              : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
+            const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
+            const bucket = env.SUPABASE_BUCKET_NAME || 'media'
+            const cleanPrefix = prefix && prefix !== bucket && prefix !== 'media'
+              ? `${prefix.replace(/^\/+|\/+$/g, '')}/`
+              : ''
+            return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
+          },
+        },
+        dokumen: {
+          prefix: 'documents',
+          disablePayloadAccessControl: true,
+          generateFileURL: ({ filename, prefix }) => {
+            const endpoint = env.SUPABASE_S3_ENDPOINT || ''
+            const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
+              ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
+              : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
+            const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
+            const bucket = env.SUPABASE_BUCKET_NAME || 'media'
+            const cleanPrefix = prefix && prefix !== bucket
+              ? `${prefix.replace(/^\/+|\/+$/g, '')}/`
+              : 'documents/'
+            return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
+          },
+        },
       },
       config: {
         endpoint: env.SUPABASE_S3_ENDPOINT,

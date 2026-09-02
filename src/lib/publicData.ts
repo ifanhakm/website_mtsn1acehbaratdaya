@@ -95,7 +95,6 @@ export const getStaff = unstable_cache(
       collection: 'staf',
       sort: 'urutan',
       depth: 1,
-      overrideAccess: false,
       limit: 60,
     })
     return result.docs
