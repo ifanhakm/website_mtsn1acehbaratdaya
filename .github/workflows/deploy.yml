@@ -83,7 +83,7 @@ jobs:
           ssh "$VPS_USER@$VPS_HOST" 'mkdir -p /opt/mtsn1acehbaratdaya'
           scp deploy/compose.yml deploy/Caddyfile "$VPS_USER@$VPS_HOST:/opt/mtsn1acehbaratdaya/"
 
-      - name: Configure production migration settings
+      - name: Configure safe production database settings
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USER: ${{ secrets.VPS_USER }}
@@ -95,7 +95,11 @@ jobs:
             temp_file=$(mktemp .env.production.XXXXXX)
             trap "rm -f $temp_file" EXIT
             grep -vE "^(ALLOW_DEV_SCHEMA_PUSH|RUN_DATABASE_MIGRATIONS)=" .env.production > "$temp_file"
-            printf "\nALLOW_DEV_SCHEMA_PUSH=false\nRUN_DATABASE_MIGRATIONS=true\n" >> "$temp_file"
+            # The existing database still contains Payload's development
+            # migration marker (batch = -1). Enabling production migrations
+            # before it is baselined opens an interactive prompt and blocks
+            # every database-backed request indefinitely.
+            printf "\nALLOW_DEV_SCHEMA_PUSH=false\nRUN_DATABASE_MIGRATIONS=false\n" >> "$temp_file"
             chmod --reference=.env.production "$temp_file"
             mv "$temp_file" .env.production
             trap - EXIT
@@ -110,3 +114,4 @@ jobs:
           printf '%s' "$GHCR_TOKEN" | ssh "$VPS_USER@$VPS_HOST" "docker login ghcr.io --username '${{ github.actor }}' --password-stdin"
           ssh "$VPS_USER@$VPS_HOST" 'cd /opt/mtsn1acehbaratdaya && docker compose --env-file .env.deploy pull && docker compose --env-file .env.deploy up -d --remove-orphans && docker image prune -f'
           ssh "$VPS_USER@$VPS_HOST" 'for attempt in $(seq 1 12); do if docker inspect --format="{{.State.Health.Status}}" mtsn1acehbaratdaya-app-1 | grep -q healthy; then exit 0; fi; sleep 5; done; docker compose -f /opt/mtsn1acehbaratdaya/compose.yml logs --tail=100 app; exit 1'
+          ssh "$VPS_USER@$VPS_HOST" 'for attempt in $(seq 1 3); do if docker exec mtsn1acehbaratdaya-app-1 node -e "fetch(\"http://127.0.0.1:3000/ready\", { signal: AbortSignal.timeout(15000) }).then(response => { if (!response.ok) process.exit(1) }).catch(() => process.exit(1))"; then exit 0; fi; sleep 5; done; docker compose -f /opt/mtsn1acehbaratdaya/compose.yml logs --tail=100 app; exit 1'

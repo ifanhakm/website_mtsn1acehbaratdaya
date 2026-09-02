@@ -55,6 +55,13 @@ dibaseline satu kali sebelum opsi tersebut diaktifkan:
 4. Set `RUN_DATABASE_MIGRATIONS=true` dan deploy. Migrasi awal mendeteksi tabel
    yang sudah ada dan hanya dicatat sebagai baseline.
 
+Selama baseline belum dilakukan, workflow deployment sengaja menetapkan
+`RUN_DATABASE_MIGRATIONS=false`. Mengaktifkannya pada database yang masih memiliki
+catatan `batch = -1` akan membuka prompt interaktif saat Payload pertama kali
+diinisialisasi dan membuat seluruh route berbasis database menunggu. Setelah
+baseline selesai dan terverifikasi, ubah pengaturan workflow tersebut menjadi
+`true` agar migrasi berikutnya kembali berjalan otomatis.
+
 Setelah baseline, setiap perubahan koleksi wajib disertai migrasi baru melalui
 `npm run payload -- migrate:create nama_perubahan`.
 
@@ -73,9 +80,10 @@ DATABASE_IDLE_TRANSACTION_TIMEOUT_MS=10000
 ```
 
 `/health` hanya memeriksa apakah proses Next.js hidup dan dipakai oleh
-healthcheck Docker. `/ready` turut memeriksa database dan dapat dipakai oleh
-monitor eksternal. Pemisahan ini mencegah pemeriksaan Docker menambah antrean
-query ketika database sedang mengalami gangguan.
+healthcheck Docker. `/ready` turut memeriksa database dan menjadi gerbang akhir
+workflow deployment. Pemisahan ini mencegah pemeriksaan Docker menambah antrean
+query ketika database sedang mengalami gangguan, sekaligus mencegah deployment
+berstatus sukses ketika hanya proses Next.js yang hidup.
 
 Jika sebuah migrasi terencana memang memerlukan lebih dari 10 detik per
 statement, naikkan sementara `DATABASE_STATEMENT_TIMEOUT_MS` dan
