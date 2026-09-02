@@ -90,19 +90,55 @@ export const getDocuments = unstable_cache(
 
 export const getStaff = unstable_cache(
   async () => {
-    try {
-      const payload = await getPayload({ config })
-      const result = await payload.find({
-        collection: 'staf',
-        limit: 100,
-        depth: 0,
-      })
-      return result.docs
-    } catch {
-      return []
-    }
+    const payload = await getPayload({ config })
+
+    const staffResult = await payload.find({
+      collection: 'staf',
+      limit: 100,
+      sort: 'urutan',
+      depth: 0,
+      overrideAccess: true,
+    })
+
+    const mediaResult = await payload.find({
+      collection: 'media',
+      limit: 300,
+      depth: 0,
+      overrideAccess: true,
+    })
+
+    const mediaMap = new Map(
+      mediaResult.docs.map((m) => [
+        String(m.id),
+        m.filename
+          ? `https://hwvcfplrligtefwazxkt.supabase.co/storage/v1/object/public/media/media/${encodeURIComponent(m.filename)}`
+          : (m.url || null),
+      ]),
+    )
+
+    return staffResult.docs.map((member) => {
+      const fotoId = typeof member.foto === 'object' && member.foto ? member.foto.id : member.foto
+      const resolvedUrl = fotoId ? mediaMap.get(String(fotoId)) : null
+
+      const finalFotoUrl =
+        resolvedUrl ||
+        (member.namaLengkap
+          ? `https://hwvcfplrligtefwazxkt.supabase.co/storage/v1/object/public/media/media/${encodeURIComponent(member.namaLengkap.trim())}.webp`
+          : null)
+
+      return {
+        id: member.id,
+        namaLengkap: member.namaLengkap || 'Nama Tidak Tersedia',
+        nip: member.nip || null,
+        jabatan: member.jabatan || 'Pendidik / Staf',
+        jenisPtk: (member.jenisPtk === 'staf' ? 'staf' : 'guru') as 'guru' | 'staf',
+        fotoUrl: finalFotoUrl,
+        fotoAlt: member.namaLengkap,
+        urutan: typeof member.urutan === 'number' ? member.urutan : 99,
+      }
+    })
   },
-  ['staff-list-v6'],
+  ['public-staff-v7-final'],
   cacheOptions('staf'),
 )
 
