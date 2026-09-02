@@ -108,7 +108,7 @@ export default function Navbar() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           {/* LOGO SEBELAH KIRI */}
-          <Link href="/" className="flex items-center gap-3 group">
+          <Link href="/" prefetch={false} className="flex items-center gap-3 group">
             {/* Logo Placeholder - Nanti diganti dengan file SVG asli logo-mtsn.svg */}
             <div className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white p-0.5 shadow-md border border-gray-100 overflow-hidden">
               <Image 
@@ -137,6 +137,7 @@ export default function Navbar() {
                   // Link Level 1 Langsung (Tanpa Dropdown)
                   <Link
                     href={item.href}
+                    prefetch={false}
                     className={`relative py-2 text-sm font-semibold tracking-wide transition-colors ${
                       isLinkActive(item.href)
                         ? "text-brand-green"
@@ -172,6 +173,7 @@ export default function Navbar() {
                           <Link
                             key={child.label}
                             href={child.href}
+                            prefetch={false}
                             className={`flex items-start gap-3 rounded-lg p-3 transition-colors ${
                               pathname === child.href
                                 ? "bg-gray-50 text-brand-green"
@@ -203,6 +205,7 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center">
             <Link
               href="/kontak"
+              prefetch={false}
               className="flex items-center gap-2 rounded-full bg-brand-green px-5 py-2.5 text-sm font-bold text-white shadow-md hover:bg-brand-green/90 hover:shadow-lg transition-all duration-300"
             >
               <Phone className="w-4 h-4 text-brand-gold" />
@@ -240,6 +243,7 @@ export default function Navbar() {
               {item.href ? (
                 <Link
                   href={item.href}
+                  prefetch={false}
                   onClick={() => setIsOpen(false)}
                   className={`block rounded-lg px-3 py-2 text-base font-bold transition-colors ${
                     isLinkActive(item.href)
@@ -274,6 +278,7 @@ export default function Navbar() {
                       <Link
                         key={child.label}
                         href={child.href}
+                        prefetch={false}
                         onClick={() => setIsOpen(false)}
                         className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition-colors ${
                           pathname === child.href
@@ -295,6 +300,7 @@ export default function Navbar() {
           <div className="pt-4">
             <Link
               href="/kontak"
+              prefetch={false}
               onClick={() => setIsOpen(false)}
               className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-green py-3 text-center text-sm font-bold text-white shadow-md hover:bg-brand-green/90 transition-all"
             >

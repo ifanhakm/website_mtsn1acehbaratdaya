@@ -12,7 +12,7 @@ export default async function DirektoriStafPage() {
   try {
     staffData = await getStaff()
   } catch (error) {
-    console.error('Direktori staf gagal dimuat dari database Supabase:', error instanceof Error ? error.message : 'unknown')
+    console.error('Direktori staf gagal dimuat:', error instanceof Error ? error.message : 'unknown')
   }
 
   return (
