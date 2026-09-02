@@ -1,10 +1,9 @@
 import React from 'react'
+import PosterCampaign from '@/components/PosterCampaign'
 import Link from 'next/link'
-import Image from 'next/image'
-import { connection } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
-
+import type { Berita } from '@/payload-types'
 import { 
   ArrowRight, 
   BookOpen, 
@@ -18,23 +17,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 
-interface MediaValue {
-  url?: string | null
-  alt?: string | null
-}
-
-interface HomeNews {
-  id: string | number
-  title: string
-  slug: string
-  excerpt: string
-  date: string
-  category: string
-  readTime: string
-  image: string | number | MediaValue
-}
-
-// Fungsi Pembantu: Format Tanggal ke Bahasa Indonesia
+// Fungsi Pembantu: Format Tanggal ke Bahasa Indonesia (misal: "26 Agustus 2026")
 const formatTanggalIndo = (dateStr: string) => {
   try {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' }
@@ -45,8 +28,12 @@ const formatTanggalIndo = (dateStr: string) => {
 }
 
 // Fungsi Pembantu: Mengambil URL Gambar dari Payload Media
-const getImageUrl = (imageField: HomeNews['image'] | null | undefined): string => {
-  if (!imageField) return '/logo.jpg' // Fallback ke logo jika tidak ada gambar
+interface ImageFieldObject {
+  url?: string | null
+}
+
+const getImageUrl = (imageField: number | ImageFieldObject | string | null | undefined): string => {
+  if (!imageField || typeof imageField === 'number') return '/logo.jpg'
   if (typeof imageField === 'object' && imageField.url) {
     return imageField.url
   }
@@ -54,32 +41,23 @@ const getImageUrl = (imageField: HomeNews['image'] | null | undefined): string =
 }
 
 export default async function HomePage() {
-  await connection()
+  // 1. Inisialisasi Payload Instance di Server Side (Menggunakan alias resmi @payload-config agar bebas dari eror compile!)
+  const payload = await getPayload({ config })
 
-  let latestNews: HomeNews[] = []
-
-  try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'berita',
-      where: {
-        status: {
-          equals: 'published',
-        },
+  // 2. Tarik 3 Berita Terbaru yang berstatus 'published' dari Supabase
+  const result = await payload.find({
+    collection: 'berita',
+    where: {
+      status: {
+        equals: 'published',
       },
-      sort: '-date',
-      limit: 3,
-      depth: 1,
-    })
+    },
+    sort: '-date', // Urutkan dari berita terbaru
+    limit: 3,      // Batasi hanya 3 berita untuk preview di beranda
+    depth: 1,      // Ambil relasi media/gambar utuh
+  })
 
-    latestNews = result.docs.flatMap((news) =>
-      news.slug
-        ? [{ id: news.id, title: news.title, slug: news.slug, excerpt: news.excerpt, date: news.date, category: news.category, readTime: news.readTime, image: news.image }]
-        : [],
-    )
-  } catch (error) {
-    console.error('Berita beranda tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
-  }
+  const latestNews = result.docs
 
   // Statistik Sekolah (Statis)
   const stats = [
@@ -141,12 +119,11 @@ export default async function HomePage() {
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="absolute -inset-1.5 bg-gradient-to-tr from-brand-gold to-brand-green rounded-2xl blur opacity-30 -z-10" />
                 <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-gray-100 border border-gray-100 shadow-2xl">
-                  <Image
-                    src="/fotogedung.jpeg"
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src="/fotogedung.jpeg" 
                     alt="Gedung MTsN 1 Aceh Barat Daya" 
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 42vw"
-                    className="object-cover transform hover:scale-105 transition-transform duration-500"
+                    className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500"
                   />
                 </div>
                 {/* Lencana Floating */}
@@ -173,7 +150,7 @@ export default async function HomePage() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {stats.map((item) => {
-              const IconComponent = item.icon;
+              const IconComponent = item.icon
               return (
                 <div key={item.id} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex flex-col items-center text-center space-y-2 hover:shadow-md transition-shadow">
                   <div className="p-3 bg-brand-green/5 rounded-full text-brand-green">
@@ -186,25 +163,22 @@ export default async function HomePage() {
                     {item.label}
                   </span>
                 </div>
-              );
+              )
             })}
           </div>
         </div>
       </section>
 
       {/* =========================================================================
-          3. SAMBUTAN KEPALA MADRASAH
+          3. SAMBUTAN KEPALA MADRASAH (TETAP DI SAMPING FOTO, TAPI MATRIKS MERAPAT DI TENGAH)
           ========================================================================= */}
-      <section className="py-16 md:py-20 bg-white">
-        {/* 1. max-w-5xl + mx-auto: Mengunci seluruh grup agar selalu presisi di tengah halaman */}
-        <div className="container mx-auto px-4 sm:px-6 max-w-5xl">
-          
-          {/* 2. md:grid-cols-12: Memaksa layout berdampingan sejak layar ukuran tablet (md) */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-center">
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl"> 
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             {/* Foto Kepala Sekolah (Menduduki 5 Kolom, merapat manis ke arah tengah) */}
-            <div className="md:col-span-5 flex justify-center md:justify-end">
-              <div className="relative w-full max-w-[260px] sm:max-w-xs">
+            <div className="lg:col-span-5 flex justify-center lg:justify-end"> 
+              <div className="relative w-full max-w-xs sm:max-w-sm">
                 <div className="absolute -inset-1 bg-brand-green/20 rounded-2xl -rotate-3 transform -z-10" />
                 <div className="aspect-[3/4] overflow-hidden rounded-2xl border-4 border-white shadow-xl bg-gray-100">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -221,29 +195,28 @@ export default async function HomePage() {
               </div>
             </div>
 
-            {/* Isi Sambutan (Menduduki 7 Kolom, berdampingan rapi sejak layar tablet) */}
-            <div className="md:col-span-7 space-y-5 text-left flex flex-col justify-center">
+            {/* Isi Sambutan (Menduduki 7 Kolom, tetap rata kiri agar mudah dibaca, namun posisinya mengumpul di tengah) */}
+            <div className="lg:col-span-7 space-y-6 text-left">
               <div>
-                <span className="inline-flex text-xs font-bold tracking-wider text-brand-green uppercase bg-brand-green/5 px-3 py-1 rounded-full">
+                <span className="text-xs font-bold tracking-wider text-brand-green uppercase bg-brand-green/5 px-3.5 py-1.5 rounded-full">
                   Kata Sambutan
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight mt-3">
                   Membuka Gerbang Informasi Madrasah Era Digital
                 </h2>
               </div>
-              
-              <div className="text-gray-600 space-y-3.5 leading-relaxed text-sm sm:text-base font-semibold">
+              <div className="text-gray-600 space-y-4 leading-relaxed text-sm sm:text-base font-semibold">
                 <p>
-                  Assalamu’alaikum Warahmatullahi Wabarakatuh.
+                  Assalamu&apos;alaikum Warahmatullahi Wabarakatuh.
                 </p>
                 <p>
                   Segala puji bagi Allah SWT, yang telah memberikan kita kekuatan untuk terus berinovasi dalam mengabdi di dunia pendidikan Islam. Selamat datang di portal resmi <strong>MTsN 1 Aceh Barat Daya</strong>. Website ini dirancang sebagai media informasi transparan, interaktif, dan modern bagi seluruh siswa, wali murid, alumni, dan publik.
                 </p>
                 <p>
-                  Sebagai salah satu <strong>Madrasah Inovasi</strong> di Provinsi Aceh, kami percaya bahwa pendidikan unggul harus menyatukan nilai-nilai keagamaan (Imtaq) dengan penguasaan teknologi informasi (Iptek). Semoga portal ini memberikan manfaat maksimal untuk kita semua.
+                  Sebagai salah satu <strong>Madrasah Inovasi</strong> di Provinsi Aceh, kami percaya bahwa pendidikan unggul harus menyatukan nilai-nilai keagamaan (Imtaq) dengan penguasaan teknologi informasi (Iptek), tanpa melupakan kepedulian sosial dan pelestarian lingkungan hidup. Semoga portal ini memberikan manfaat maksimal untuk kita semua.
                 </p>
                 <p>
-                  Wassalamu’alaikum Warahmatullahi Wabarakatuh.
+                  Wassalamu&apos;alaikum Warahmatullahi Wabarakatuh.
                 </p>
               </div>
             </div>
@@ -300,11 +273,16 @@ export default async function HomePage() {
               </div>
               <h3 className="text-xl font-bold text-gray-950 mb-3">Berwawasan Lingkungan</h3>
               <p className="text-gray-600 leading-relaxed text-sm">
-                Menciptakan lingkungan madrasah wiyata mandala yang hijau, bersih, dan asri guna menanamkan karakter cinta alam serta menerapkan pola hidup sehat sejak dini.
+                Menciptakan lingkungan madrasah wiyata mandala yang hijau, bersih, and asri guna menanamkan karakter cinta alam serta menerapkan pola hidup sehat sejak dini.
               </p>
             </div>
 
           </div>
+
+          {/* =========================================================================
+          KAMPANYE & SOSIALISASI MADRASAH (ZONA INTEGRITAS, ANTI-KORUPSI, ANTI-BULLYING)
+          ========================================================================= */}
+          <PosterCampaign />
         </div>
       </section>
 
@@ -332,12 +310,12 @@ export default async function HomePage() {
           </div>
 
           {latestNews.length === 0 ? (
-            <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-100 p-6">
+            <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-150 p-6">
               <p className="text-gray-400 font-semibold text-sm">Belum ada berita yang diterbitkan.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {latestNews.map((news) => (
+              {latestNews.map((news: Berita) => (
                 <article key={news.id} className="bg-white rounded-2xl border border-gray-150 overflow-hidden shadow-sm flex flex-col hover:shadow-md transition-shadow group">
                   <div className="relative aspect-video bg-gray-100 overflow-hidden">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
