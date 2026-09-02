@@ -1,5 +1,5 @@
 import type { Staf } from '@/payload-types'
-import { getSupabasePublicUrl, type SupabasePublicUrlOptions } from './storageUrl'
+import { getPublicUploadUrl, type SupabasePublicUrlOptions } from './storageUrl'
 
 export interface PublicStaffMember {
   id: string | number
@@ -17,11 +17,8 @@ export function toPublicStaffMember(
   storageOptions?: SupabasePublicUrlOptions,
 ): PublicStaffMember {
   const photo = typeof member.foto === 'object' && member.foto ? member.foto : null
-  const publicPhotoUrl = photo?.filename && storageOptions
-    ? getSupabasePublicUrl(photo.filename, photo.prefix, {
-        ...storageOptions,
-        defaultPrefix: 'media',
-      })
+  const publicPhotoUrl = photo && storageOptions
+    ? getPublicUploadUrl(photo, storageOptions)
     : null
 
   return {

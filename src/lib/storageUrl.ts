@@ -5,6 +5,12 @@ export interface SupabasePublicUrlOptions {
   defaultPrefix?: string
 }
 
+export interface UploadMetadata {
+  filename?: string | null
+  prefix?: string | null
+  url?: string | null
+}
+
 export function getSupabasePublicUrl(
   filename: string,
   prefix: string | null | undefined,
@@ -25,4 +31,27 @@ export function getSupabasePublicUrl(
   const cleanPrefix = effectivePrefix ? `${effectivePrefix.replace(/^\/+|\/+$/g, '')}/` : ''
 
   return `${baseUrl}/storage/v1/object/public/${encodeURIComponent(bucket)}/${cleanPrefix}${encodeURIComponent(filename)}`
+}
+
+export function getPublicUploadUrl(
+  upload: UploadMetadata,
+  options: SupabasePublicUrlOptions,
+  defaultPrefix = 'media',
+): string | null {
+  if (!upload.filename) return upload.url || null
+
+  return getSupabasePublicUrl(upload.filename, upload.prefix, {
+    ...options,
+    defaultPrefix,
+  }) || upload.url || null
+}
+
+export function withPublicUploadUrl<T extends UploadMetadata>(
+  upload: T,
+  options: SupabasePublicUrlOptions,
+  defaultPrefix = 'media',
+): T {
+  const url = getPublicUploadUrl(upload, options, defaultPrefix)
+
+  return url && url !== upload.url ? { ...upload, url } : upload
 }
