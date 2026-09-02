@@ -36,4 +36,26 @@ describe('toPublicStaffMember', () => {
       fotoAlt: baseStaff.namaLengkap,
     })
   })
+
+  it('membentuk URL publik Supabase dari filename meskipun URL Payload masih lokal', () => {
+    const photo: Media = {
+      id: 10,
+      alt: 'Foto resmi Siti Aminah',
+      url: '/api/media/file/Afrizah%2C%20S.%20Ag.webp',
+      filename: 'Afrizah, S. Ag.webp',
+      prefix: null,
+      createdAt: baseStaff.createdAt,
+      updatedAt: baseStaff.updatedAt,
+    }
+
+    expect(toPublicStaffMember(
+      { ...baseStaff, foto: photo },
+      {
+        supabaseUrl: 'https://hwvcfplrligtefwazxkt.supabase.co',
+        bucket: 'media',
+      },
+    )).toMatchObject({
+      fotoUrl: 'https://hwvcfplrligtefwazxkt.supabase.co/storage/v1/object/public/media/media/Afrizah%2C%20S.%20Ag.webp',
+    })
+  })
 })

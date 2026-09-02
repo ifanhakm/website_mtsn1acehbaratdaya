@@ -18,6 +18,7 @@ import { KategoriLayanan } from './cms/collections/KategoriLayanan'
 import { Galeri } from './cms/collections/Galeri'
 import { cloudStorageEnabled, env } from './lib/env'
 import { createDatabaseSslConfig } from './lib/databaseSsl'
+import { getSupabasePublicUrl } from './lib/storageUrl'
 import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
@@ -27,23 +28,10 @@ const certificateAuthority = env.DATABASE_SSL === 'true'
   : undefined
 const sslConfig = createDatabaseSslConfig(env.DATABASE_SSL, certificateAuthority)
 
-const getSupabasePublicUrl = (filename: string, prefix?: string, defaultPrefix?: string) => {
-  if (!filename) return ''
-  const endpoint = env.SUPABASE_S3_ENDPOINT || ''
-  const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
-    ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
-    : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
-  const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
-  const bucket = env.SUPABASE_BUCKET_NAME || 'media'
-
-  if (!baseUrl) {
-    return `/api/media/file/${filename}`
-  }
-
-  const effectivePrefix = prefix || defaultPrefix || 'media'
-  const cleanPrefix = effectivePrefix ? `${effectivePrefix.replace(/^\/+|\/+$/g, '')}/` : ''
-
-  return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
+const publicStorageOptions = {
+  supabaseUrl: env.SUPABASE_URL,
+  s3Endpoint: env.SUPABASE_S3_ENDPOINT,
+  bucket: env.SUPABASE_BUCKET_NAME,
 }
 
 export default buildConfig({
@@ -117,12 +105,17 @@ export default buildConfig({
         media: {
           prefix: 'media',
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) => getSupabasePublicUrl(filename, prefix),
+          generateFileURL: ({ filename, prefix }) =>
+            getSupabasePublicUrl(filename, prefix, publicStorageOptions) || `/api/media/file/${filename}`,
         },
         dokumen: {
           prefix: 'documents',
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) => getSupabasePublicUrl(filename, prefix, 'documents'),
+          generateFileURL: ({ filename, prefix }) =>
+            getSupabasePublicUrl(filename, prefix, {
+              ...publicStorageOptions,
+              defaultPrefix: 'documents',
+            }) || `/api/dokumen/file/${filename}`,
         },
       },
       config: {

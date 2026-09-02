@@ -3,6 +3,7 @@ import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { env } from '@/lib/env'
 import { toPublicStaffMember, type PublicStaffMember } from '@/lib/staff'
 
 export type { PublicStaffMember } from '@/lib/staff'
@@ -102,9 +103,13 @@ export const getStaff = unstable_cache(
       overrideAccess: false,
     })
 
-    return staffResult.docs.map(toPublicStaffMember)
+    return staffResult.docs.map((member) => toPublicStaffMember(member, {
+      supabaseUrl: env.SUPABASE_URL,
+      s3Endpoint: env.SUPABASE_S3_ENDPOINT,
+      bucket: env.SUPABASE_BUCKET_NAME,
+    }))
   },
-  ['public-staff-v2'],
+  ['public-staff-v3'],
   cacheOptions('staf'),
 )
 
