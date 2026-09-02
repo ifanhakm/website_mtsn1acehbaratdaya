@@ -91,36 +91,15 @@ export const getDocuments = unstable_cache(
 export const getStaff = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
-    const [staffResult, mediaResult] = await Promise.all([
-      payload.find({
-        collection: 'staf',
-        sort: 'urutan',
-        depth: 0,
-        limit: 100,
-      }),
-      payload.find({
-        collection: 'media',
-        depth: 0,
-        limit: 300,
-      }),
-    ])
-
-    const mediaMap = new Map(mediaResult.docs.map((m) => [String(m.id), m]))
-
-    return staffResult.docs.map((member) => {
-      let resolvedFoto = member.foto
-      if (typeof member.foto === 'number' || typeof member.foto === 'string') {
-        resolvedFoto = mediaMap.get(String(member.foto)) ?? member.foto
-      } else if (member.foto && typeof member.foto === 'object' && 'id' in member.foto && !('url' in member.foto)) {
-        resolvedFoto = mediaMap.get(String(member.foto.id)) ?? member.foto
-      }
-      return {
-        ...member,
-        foto: resolvedFoto,
-      }
+    const result = await payload.find({
+      collection: 'staf',
+      sort: 'urutan',
+      depth: 1,
+      limit: 100,
     })
+    return result.docs
   },
-  ['public-staff-v2'],
+  ['public-staff-v3'],
   cacheOptions('staf'),
 )
 

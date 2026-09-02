@@ -100,7 +100,7 @@ export default function DirektoriStafClient({ staffData = [] }: { staffData: Sta
                       src={kepalaMadrasah.fotoUrl}
                       alt={kepalaMadrasah.fotoAlt || kepalaMadrasah.namaLengkap}
                       fill
-                      priority
+                      unoptimized
                       sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover object-top"
                     />
@@ -221,6 +221,7 @@ export default function DirektoriStafClient({ staffData = [] }: { staffData: Sta
                       src={member.fotoUrl}
                       alt={member.fotoAlt || member.namaLengkap}
                       fill
+                      unoptimized
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                       className="object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
                     />
