@@ -99,9 +99,14 @@ export default buildConfig({
     pool: {
       connectionString: env.DATABASE_URI,
       ssl: sslConfig,
-      max: 10,
+      max: env.DATABASE_POOL_MAX,
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 10000,
+      connectionTimeoutMillis: env.DATABASE_CONNECTION_TIMEOUT_MS,
+      statement_timeout: env.DATABASE_STATEMENT_TIMEOUT_MS,
+      query_timeout: env.DATABASE_QUERY_TIMEOUT_MS,
+      lock_timeout: env.DATABASE_LOCK_TIMEOUT_MS,
+      idle_in_transaction_session_timeout: env.DATABASE_IDLE_TRANSACTION_TIMEOUT_MS,
+      maxLifetimeSeconds: 300,
     },
   }),
   plugins: [

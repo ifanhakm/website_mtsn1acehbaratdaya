@@ -57,3 +57,27 @@ dibaseline satu kali sebelum opsi tersebut diaktifkan:
 
 Setelah baseline, setiap perubahan koleksi wajib disertai migrasi baru melalui
 `npm run payload -- migrate:create nama_perubahan`.
+
+## Pool database dan pemeriksaan kesehatan
+
+Deployment VPS memakai Supavisor session mode pada port `5432`. Untuk satu
+container aplikasi, gunakan nilai awal berikut di `.env.production`:
+
+```env
+DATABASE_POOL_MAX=5
+DATABASE_CONNECTION_TIMEOUT_MS=5000
+DATABASE_STATEMENT_TIMEOUT_MS=10000
+DATABASE_QUERY_TIMEOUT_MS=12000
+DATABASE_LOCK_TIMEOUT_MS=3000
+DATABASE_IDLE_TRANSACTION_TIMEOUT_MS=10000
+```
+
+`/health` hanya memeriksa apakah proses Next.js hidup dan dipakai oleh
+healthcheck Docker. `/ready` turut memeriksa database dan dapat dipakai oleh
+monitor eksternal. Pemisahan ini mencegah pemeriksaan Docker menambah antrean
+query ketika database sedang mengalami gangguan.
+
+Jika sebuah migrasi terencana memang memerlukan lebih dari 10 detik per
+statement, naikkan sementara `DATABASE_STATEMENT_TIMEOUT_MS` dan
+`DATABASE_QUERY_TIMEOUT_MS`, jalankan deployment terkontrol, lalu kembalikan
+ke nilai normal.

@@ -95,7 +95,8 @@ website_mtsn1acehbaratdaya/
 │   │   │   │   └── galeri/
 │   │   │   │       ├── GaleriClient.tsx # Client Component: Grid galeri foto dengan filter
 │   │   │   │       └── page.tsx       # Galeri foto kegiatan sekolah
-│   │   │   ├── health/route.ts        # Readiness endpoint aplikasi dan database
+│   │   │   ├── health/route.ts        # Liveness endpoint proses aplikasi
+│   │   │   ├── ready/route.ts         # Readiness endpoint aplikasi dan database
 │   │   │   ├── layanan/               # Portal Layanan Terintegrasi
 │   │   │   │   ├── LayananClient.tsx  # Client Component: Daftar layanan terpadu
 │   │   │   │   ├── page.tsx           # Server Component: Portal layanan utama
@@ -182,11 +183,6 @@ npm install
 ### 4. Konfigurasi Variabel Lingkungan (`.env.local`)
 Buat berkas bernama **`.env.local`** di root folder dan lengkapi kredensial Supabase Anda:
 
-> File hasil unduhan seperti `.env.download` tidak dibaca otomatis oleh Next.js.
-> Salin ke `.env.local` untuk pengembangan atau ke `deploy/.env.production`
-> untuk deployment. Gunakan `SCHOOL_EMAIL`, bukan `NEXT_PUBLIC_SCHOOL_EMAIL`,
-> dan jangan menyimpan `SUPABASE_SERVICE_ROLE_KEY` jika aplikasi tidak memakainya.
-
 ```env
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 DATABASE_URI=postgresql://postgres.[ID_PROYEK_SUPABASE]:[PASS_DB]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
@@ -194,6 +190,12 @@ PAYLOAD_SECRET=buat-string-acak-panjang-apa-saja-untuk-pengamanan-token
 SCHOOL_EMAIL=website.mtsn1abdya@gmail.com
 RESEND_API_KEY=re_xxxxxxxxx
 DATABASE_SSL=true
+DATABASE_POOL_MAX=5
+DATABASE_CONNECTION_TIMEOUT_MS=5000
+DATABASE_STATEMENT_TIMEOUT_MS=10000
+DATABASE_QUERY_TIMEOUT_MS=12000
+DATABASE_LOCK_TIMEOUT_MS=3000
+DATABASE_IDLE_TRANSACTION_TIMEOUT_MS=10000
 ALLOW_DEV_SCHEMA_PUSH=false
 RUN_DATABASE_MIGRATIONS=false
 SUPABASE_URL=https://[ID_PROYEK_SUPABASE].supabase.co
@@ -220,18 +222,6 @@ npm run build
 ```
 
 `npm run check` menjalankan ESLint, pemeriksaan tipe TypeScript, dan unit test. Jangan pernah commit file `.env*`; gunakan `.env.example` sebagai template.
-
----
-
-## ⚡ Penyelesaian Masalah Umum (Troubleshooting)
-
-### 1. Hydration Mismatch Error (Akibat Ekstensi Browser)
-Jika Anda melihat log peringatan di konsol browser mengenai perbedaan atribut `has-extension` atau sejenisnya saat memuat halaman, masalah tersebut sudah diantisipasi di proyek ini dengan memasang:
-* Atribut `suppressHydrationWarning` pada tag `<html>` layout utama.
-* Properti `suppressHydrationWarning: true` di dalam blok `admin` pada file `payload.config.ts` untuk melumpuhkan peringatan di area panel admin.
-
-### 2. Impor Config Payload Tidak Ditemukan (`Module not found`)
-Gunakan alias resmi bawaan Payload CMS yaitu **`@payload-config`** (bukan `@/payload.config` dengan garis miring) untuk merujuk file konfigurasi di seluruh komponen halaman Next.js. Hal ini didaftarkan di `tsconfig.json` dan mencegah kegagalan resolusi folder saat proses kompilasi bundler.
 
 ---
 
