@@ -21,18 +21,22 @@ export default function DirektoriStafClient({ staffData = [] }: { staffData: Sta
   const [activeTab, setActiveTab] = useState<'semua' | 'guru' | 'staf'>('semua')
   const [searchQuery, setSearchQuery] = useState('')
 
+  // Urutkan staf berdasarkan urutan tampilan (1 = Kepala, 2 = Waka, dst)
+  const sortedStaff = useMemo(() => {
+    return [...staffData].sort((a, b) => (a.urutan ?? 99) - (b.urutan ?? 99))
+  }, [staffData])
+
   // 1. Ambil Kepala Madrasah (Pimpinan) untuk dipajang di Spotlight paling atas
   const kepalaMadrasah = useMemo(() => {
-    return (staffData || []).find(
+    return sortedStaff.find(
       (member) =>
         member.urutan === 1 || (member.jabatan && member.jabatan.toLowerCase().includes('kepala madrasah'))
     )
-  }, [staffData])
+  }, [sortedStaff])
 
   // 2. Filter & Pencarian Data untuk Grid Utama
   const filteredStaff = useMemo(() => {
-    const list = staffData || []
-    return list.filter((member) => {
+    return sortedStaff.filter((member) => {
       // Kecualikan Kepala Madrasah dari grid utama agar tidak tampil ganda
       if (kepalaMadrasah && member.id === kepalaMadrasah.id) return false
 
@@ -46,7 +50,7 @@ export default function DirektoriStafClient({ staffData = [] }: { staffData: Sta
 
       return matchesTab && matchesSearch
     })
-  }, [activeTab, searchQuery, staffData, kepalaMadrasah])
+  }, [activeTab, searchQuery, sortedStaff, kepalaMadrasah])
 
   return (
     <div className="min-h-screen bg-gray-50/50">
