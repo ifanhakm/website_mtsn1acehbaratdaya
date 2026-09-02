@@ -6,7 +6,6 @@ import DirektoriStafClient, { type StaffMember } from './StafClient'
 
 function normalizeMediaUrl(url: string | null | undefined): string | null {
   if (!url) return null
-  // Make self-referencing full URLs relative to avoid internal container loopback fetch issues
   if (url.startsWith('https://mtsn1acehbaratdaya.sch.id/api/')) {
     return url.replace('https://mtsn1acehbaratdaya.sch.id', '')
   }
@@ -22,24 +21,30 @@ export default async function DirektoriStafPage() {
   let staffData: StaffMember[] = []
 
   try {
-    const rawStaff = await getStaff()
-    staffData = (rawStaff || []).map((member) => {
-      const fotoObj = typeof member.foto === 'object' && member.foto ? member.foto : null
-      const rawUrl = fotoObj?.url || (typeof member.foto === 'string' ? member.foto : null)
-      const fotoUrl = normalizeMediaUrl(rawUrl)
-      const fotoAlt = fotoObj?.alt || member.namaLengkap
+    const rawStaff = await Promise.race([
+      getStaff(),
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
+    ])
 
-      return {
-        id: member.id,
-        namaLengkap: member.namaLengkap || 'Nama Tidak Tersedia',
-        nip: member.nip || null,
-        jabatan: member.jabatan || 'Pendidik / Staf',
-        jenisPtk: (member.jenisPtk === 'staf' ? 'staf' : 'guru') as 'guru' | 'staf',
-        fotoUrl: fotoUrl,
-        fotoAlt: fotoAlt,
-        urutan: typeof member.urutan === 'number' ? member.urutan : 99,
-      }
-    })
+    if (rawStaff && Array.isArray(rawStaff)) {
+      staffData = rawStaff.map((member) => {
+        const fotoObj = typeof member.foto === 'object' && member.foto ? member.foto : null
+        const rawUrl = fotoObj?.url || (typeof member.foto === 'string' ? member.foto : null)
+        const fotoUrl = normalizeMediaUrl(rawUrl)
+        const fotoAlt = fotoObj?.alt || member.namaLengkap
+
+        return {
+          id: member.id,
+          namaLengkap: member.namaLengkap || 'Nama Tidak Tersedia',
+          nip: member.nip || null,
+          jabatan: member.jabatan || 'Pendidik / Staf',
+          jenisPtk: (member.jenisPtk === 'staf' ? 'staf' : 'guru') as 'guru' | 'staf',
+          fotoUrl: fotoUrl,
+          fotoAlt: fotoAlt,
+          urutan: typeof member.urutan === 'number' ? member.urutan : 99,
+        }
+      })
+    }
   } catch (error) {
     console.error('Direktori staf tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
   }

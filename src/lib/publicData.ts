@@ -91,15 +91,30 @@ export const getDocuments = unstable_cache(
 export const getStaff = unstable_cache(
   async () => {
     const payload = await getPayload({ config })
-    const result = await payload.find({
+    const staffResult = await payload.find({
       collection: 'staf',
       sort: 'urutan',
-      depth: 1,
+      depth: 0,
       limit: 100,
     })
-    return result.docs
+    const mediaResult = await payload.find({
+      collection: 'media',
+      depth: 0,
+      limit: 300,
+    })
+
+    const mediaMap = new Map(mediaResult.docs.map((m) => [String(m.id), m]))
+
+    return staffResult.docs.map((member) => {
+      const fotoId = typeof member.foto === 'object' && member.foto ? member.foto.id : member.foto
+      const resolvedMedia = fotoId ? mediaMap.get(String(fotoId)) : null
+      return {
+        ...member,
+        foto: resolvedMedia ?? member.foto,
+      }
+    })
   },
-  ['public-staff-v3'],
+  ['public-staff-v4'],
   cacheOptions('staf'),
 )
 

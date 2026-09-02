@@ -3,7 +3,6 @@
 
 import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Search, Users, GraduationCap, Briefcase, ChevronRight, User } from 'lucide-react'
 
 export interface StaffMember {
@@ -96,13 +95,15 @@ export default function DirektoriStafClient({ staffData = [] }: { staffData: Sta
               <div className="md:col-span-5 bg-gray-50 flex items-center justify-center p-8 border-b md:border-b-0 md:border-r border-gray-100">
                 <div className="relative overflow-hidden flex aspect-[3/4] w-full max-w-[240px] items-center justify-center rounded-2xl bg-brand-green/10 border-4 border-white shadow-lg text-brand-green">
                   {kepalaMadrasah.fotoUrl ? (
-                    <Image
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
                       src={kepalaMadrasah.fotoUrl}
                       alt={kepalaMadrasah.fotoAlt || kepalaMadrasah.namaLengkap}
-                      fill
-                      unoptimized
-                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover object-top"
+                      loading="eager"
+                      className="absolute inset-0 h-full w-full object-cover object-top"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
                     />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-6 text-gray-400">
@@ -217,13 +218,15 @@ export default function DirektoriStafClient({ staffData = [] }: { staffData: Sta
                 {/* 1. Bagian Atas: Foto Portrait 3:4 dengan 'object-top' agar kepala tidak terpotong */}
                 <div className="relative aspect-[3/4] w-full bg-gray-50 overflow-hidden">
                   {member.fotoUrl ? (
-                    <Image
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
                       src={member.fotoUrl}
                       alt={member.fotoAlt || member.namaLengkap}
-                      fill
-                      unoptimized
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      className="object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover object-top transform group-hover:scale-105 transition-transform duration-500"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                      }}
                     />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-gray-400">
