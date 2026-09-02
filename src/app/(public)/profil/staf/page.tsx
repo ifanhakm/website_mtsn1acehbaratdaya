@@ -21,10 +21,7 @@ export default async function DirektoriStafPage() {
   let staffData: StaffMember[] = []
 
   try {
-    const rawStaff = await Promise.race([
-      getStaff(),
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
-    ])
+    const rawStaff = await getStaff()
 
     if (rawStaff && Array.isArray(rawStaff)) {
       staffData = rawStaff.map((member) => {

@@ -96,11 +96,13 @@ export const getStaff = unstable_cache(
       sort: 'urutan',
       depth: 0,
       limit: 100,
+      overrideAccess: true,
     })
     const mediaResult = await payload.find({
       collection: 'media',
       depth: 0,
       limit: 300,
+      overrideAccess: true,
     })
 
     const mediaMap = new Map(mediaResult.docs.map((m) => [String(m.id), m]))
@@ -114,7 +116,7 @@ export const getStaff = unstable_cache(
       }
     })
   },
-  ['public-staff-v4'],
+  ['public-staff-v5'],
   cacheOptions('staf'),
 )
 
