@@ -1,13 +1,11 @@
 // Path: src/app/(public)/profil/staf/page.tsx
 import React from 'react'
-import { connection } from 'next/server'
-import { getStaff } from '@/lib/publicData'
 import DirektoriStafClient, { type StaffMember } from './StafClient'
 
 const getSupabasePhotoUrl = (fileName: string) =>
   `https://hwvcfplrligtefwazxkt.supabase.co/storage/v1/object/public/media/media/${encodeURIComponent(fileName)}.webp`
 
-// Daftar Guru & Tenaga Kependidikan Resmi dari Supabase Storage
+// Daftar Lengkap 24 Dewan Guru & Tenaga Kependidikan Resmi dari Supabase Storage
 const defaultStaffList: StaffMember[] = [
   {
     id: 'staf-1',
@@ -231,47 +229,8 @@ const defaultStaffList: StaffMember[] = [
   },
 ]
 
-export default async function DirektoriStafPage() {
-  await connection()
-
-  let staffData: StaffMember[] = []
-
-  try {
-    // Proteksi timeout 1.5 detik agar halaman TIDAK AKAN PERNAH menggantung jika koneksi database sedang lambat
-    const rawStaff = await Promise.race([
-      getStaff(),
-      new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500)),
-    ])
-
-    if (rawStaff && Array.isArray(rawStaff) && rawStaff.length > 0) {
-      staffData = rawStaff.map((member) => {
-        let fotoUrl: string | null = null
-        if (typeof member.foto === 'object' && member.foto && 'url' in member.foto && typeof member.foto.url === 'string') {
-          fotoUrl = member.foto.url
-        } else if (member.namaLengkap) {
-          fotoUrl = getSupabasePhotoUrl(member.namaLengkap.trim())
-        }
-
-        return {
-          id: member.id,
-          namaLengkap: member.namaLengkap || 'Nama Tidak Tersedia',
-          nip: member.nip || null,
-          jabatan: member.jabatan || 'Pendidik / Staf',
-          jenisPtk: (member.jenisPtk === 'staf' ? 'staf' : 'guru') as 'guru' | 'staf',
-          fotoUrl: fotoUrl,
-          fotoAlt: member.namaLengkap,
-          urutan: typeof member.urutan === 'number' ? member.urutan : 99,
-        }
-      })
-    }
-  } catch (error) {
-    console.error('Direktori staf fallback aktif:', error instanceof Error ? error.message : 'unknown')
-  }
-
-  // Gunakan data guru resmi Supabase jika database sedang query lambat atau masih kosong
-  const finalStaffData = staffData.length > 0 ? staffData : defaultStaffList
-
+export default function DirektoriStafPage() {
   return (
-    <DirektoriStafClient staffData={finalStaffData} />
+    <DirektoriStafClient staffData={defaultStaffList} />
   )
 }
