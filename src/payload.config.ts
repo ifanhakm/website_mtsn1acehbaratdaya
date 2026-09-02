@@ -27,6 +27,27 @@ const certificateAuthority = env.DATABASE_SSL === 'true'
   : undefined
 const sslConfig = createDatabaseSslConfig(env.DATABASE_SSL, certificateAuthority)
 
+const getSupabasePublicUrl = (filename: string, prefix?: string, defaultPrefix?: string) => {
+  if (!filename) return ''
+  const endpoint = env.SUPABASE_S3_ENDPOINT || ''
+  const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
+    ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
+    : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
+  const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
+  const bucket = env.SUPABASE_BUCKET_NAME || 'media'
+
+  if (!baseUrl) {
+    return `/api/media/file/${filename}`
+  }
+
+  const effectivePrefix = prefix || defaultPrefix || ''
+  const cleanPrefix = effectivePrefix && effectivePrefix !== bucket && effectivePrefix !== 'media'
+    ? `${effectivePrefix.replace(/^\/+|\/+$/g, '')}/`
+    : ''
+
+  return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
+}
+
 export default buildConfig({
   serverURL: env.NEXT_PUBLIC_SERVER_URL,
   email: env.RESEND_API_KEY
@@ -89,34 +110,12 @@ export default buildConfig({
       collections: {
         media: {
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) => {
-            const endpoint = env.SUPABASE_S3_ENDPOINT || ''
-            const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
-              ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
-              : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
-            const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
-            const bucket = env.SUPABASE_BUCKET_NAME || 'media'
-            const cleanPrefix = prefix && prefix !== bucket && prefix !== 'media'
-              ? `${prefix.replace(/^\/+|\/+$/g, '')}/`
-              : ''
-            return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
-          },
+          generateFileURL: ({ filename, prefix }) => getSupabasePublicUrl(filename, prefix),
         },
         dokumen: {
           prefix: 'documents',
           disablePayloadAccessControl: true,
-          generateFileURL: ({ filename, prefix }) => {
-            const endpoint = env.SUPABASE_S3_ENDPOINT || ''
-            const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
-              ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
-              : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
-            const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
-            const bucket = env.SUPABASE_BUCKET_NAME || 'media'
-            const cleanPrefix = prefix && prefix !== bucket
-              ? `${prefix.replace(/^\/+|\/+$/g, '')}/`
-              : 'documents/'
-            return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
-          },
+          generateFileURL: ({ filename, prefix }) => getSupabasePublicUrl(filename, prefix, 'documents'),
         },
       },
       config: {

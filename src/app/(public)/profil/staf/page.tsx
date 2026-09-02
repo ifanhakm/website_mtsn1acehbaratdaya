@@ -10,15 +10,23 @@ export default async function DirektoriStafPage() {
   let staffData: StaffMember[] = []
 
   try {
-    staffData = (await getStaff()).map((member) => ({
-      id: member.id,
-      namaLengkap: member.namaLengkap,
-      nip: member.nip,
-      jabatan: member.jabatan,
-      jenisPtk: member.jenisPtk,
-      foto: member.foto,
-      urutan: member.urutan,
-    }))
+    const rawStaff = await getStaff()
+    staffData = (rawStaff || []).map((member) => {
+      const fotoObj = typeof member.foto === 'object' && member.foto ? member.foto : null
+      const fotoUrl = fotoObj?.url || (typeof member.foto === 'string' ? member.foto : null)
+      const fotoAlt = fotoObj?.alt || member.namaLengkap
+
+      return {
+        id: member.id,
+        namaLengkap: member.namaLengkap || 'Nama Tidak Tersedia',
+        nip: member.nip || null,
+        jabatan: member.jabatan || 'Pendidik / Staf',
+        jenisPtk: (member.jenisPtk === 'staf' ? 'staf' : 'guru') as 'guru' | 'staf',
+        fotoUrl: fotoUrl,
+        fotoAlt: fotoAlt,
+        urutan: typeof member.urutan === 'number' ? member.urutan : 99,
+      }
+    })
   } catch (error) {
     console.error('Direktori staf tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
   }
