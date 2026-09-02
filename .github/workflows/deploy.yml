@@ -95,7 +95,7 @@ jobs:
             temp_file=$(mktemp .env.production.XXXXXX)
             trap "rm -f $temp_file" EXIT
             grep -vE "^(ALLOW_DEV_SCHEMA_PUSH|RUN_DATABASE_MIGRATIONS)=" .env.production > "$temp_file"
-            # The existing database still contains Payload's development
+            # The existing database still contains a Payload development
             # migration marker (batch = -1). Enabling production migrations
             # before it is baselined opens an interactive prompt and blocks
             # every database-backed request indefinitely.
