@@ -2,17 +2,30 @@
 import React from 'react'
 import { connection } from 'next/server'
 import { getStaff } from '@/lib/publicData'
+import { env } from '@/lib/env'
 import DirektoriStafClient, { type StaffMember } from './StafClient'
 
-function normalizeMediaUrl(url: string | null | undefined): string | null {
-  if (!url) return null
-  if (url.startsWith('https://mtsn1acehbaratdaya.sch.id/api/')) {
-    return url.replace('https://mtsn1acehbaratdaya.sch.id', '')
+function getDirectStaffPhotoUrl(namaLengkap: string, foto: unknown): string | null {
+  if (typeof foto === 'object' && foto && 'url' in foto && typeof (foto as { url?: string }).url === 'string') {
+    return (foto as { url: string }).url
   }
-  if (url.startsWith('http://43.173.7.84/api/')) {
-    return url.replace('http://43.173.7.84', '')
+  if (typeof foto === 'string' && (foto.startsWith('http://') || foto.startsWith('https://') || foto.startsWith('/'))) {
+    return foto
   }
-  return url
+  
+  // Supabase CDN direct URL based on staff name (matches Supabase Storage bucket root)
+  const endpoint = env.SUPABASE_S3_ENDPOINT || ''
+  const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
+    ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
+    : endpoint.replace(/\/storage\/v1\/s3\/?$/, '')
+  const baseUrl = (env.SUPABASE_URL || derivedBaseUrl).replace(/\/+$/, '')
+  const bucket = env.SUPABASE_BUCKET_NAME || 'media'
+
+  if (baseUrl && namaLengkap) {
+    return `${baseUrl}/storage/v1/object/public/${bucket}/${encodeURIComponent(namaLengkap.trim())}.webp`
+  }
+
+  return null
 }
 
 export default async function DirektoriStafPage() {
@@ -25,10 +38,7 @@ export default async function DirektoriStafPage() {
 
     if (rawStaff && Array.isArray(rawStaff)) {
       staffData = rawStaff.map((member) => {
-        const fotoObj = typeof member.foto === 'object' && member.foto ? member.foto : null
-        const rawUrl = fotoObj?.url || (typeof member.foto === 'string' ? member.foto : null)
-        const fotoUrl = normalizeMediaUrl(rawUrl)
-        const fotoAlt = fotoObj?.alt || member.namaLengkap
+        const fotoUrl = getDirectStaffPhotoUrl(member.namaLengkap, member.foto)
 
         return {
           id: member.id,
@@ -37,7 +47,7 @@ export default async function DirektoriStafPage() {
           jabatan: member.jabatan || 'Pendidik / Staf',
           jenisPtk: (member.jenisPtk === 'staf' ? 'staf' : 'guru') as 'guru' | 'staf',
           fotoUrl: fotoUrl,
-          fotoAlt: fotoAlt,
+          fotoAlt: `${member.namaLengkap} - ${member.jabatan}`,
           urutan: typeof member.urutan === 'number' ? member.urutan : 99,
         }
       })

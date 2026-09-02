@@ -94,11 +94,11 @@ export const getStaff = unstable_cache(
     const result = await payload.find({
       collection: 'staf',
       limit: 100,
-      depth: 1,
+      depth: 0,
     })
     return result.docs
   },
-  ['staff-directory-clean'],
+  ['staff-list-fast'],
   cacheOptions('staf'),
 )
 
