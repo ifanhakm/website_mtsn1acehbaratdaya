@@ -40,10 +40,8 @@ const getSupabasePublicUrl = (filename: string, prefix?: string, defaultPrefix?:
     return `/api/media/file/${filename}`
   }
 
-  const effectivePrefix = prefix || defaultPrefix || ''
-  const cleanPrefix = effectivePrefix && effectivePrefix !== bucket && effectivePrefix !== 'media'
-    ? `${effectivePrefix.replace(/^\/+|\/+$/g, '')}/`
-    : ''
+  const effectivePrefix = prefix || defaultPrefix || 'media'
+  const cleanPrefix = effectivePrefix ? `${effectivePrefix.replace(/^\/+|\/+$/g, '')}/` : ''
 
   return `${baseUrl}/storage/v1/object/public/${bucket}/${cleanPrefix}${encodeURIComponent(filename)}`
 }

@@ -13,7 +13,7 @@ function getDirectStaffPhotoUrl(namaLengkap: string, foto: unknown): string | nu
     return foto
   }
   
-  // Supabase CDN direct URL based on staff name (matches Supabase Storage bucket root)
+  // Supabase CDN direct URL (matches /storage/v1/object/public/media/media/[namaLengkap].webp)
   const endpoint = env.SUPABASE_S3_ENDPOINT || ''
   const derivedBaseUrl = endpoint.includes('.storage.supabase.co/storage/v1/s3')
     ? endpoint.replace('.storage.supabase.co/storage/v1/s3', '.supabase.co')
@@ -22,7 +22,7 @@ function getDirectStaffPhotoUrl(namaLengkap: string, foto: unknown): string | nu
   const bucket = env.SUPABASE_BUCKET_NAME || 'media'
 
   if (baseUrl && namaLengkap) {
-    return `${baseUrl}/storage/v1/object/public/${bucket}/${encodeURIComponent(namaLengkap.trim())}.webp`
+    return `${baseUrl}/storage/v1/object/public/${bucket}/media/${encodeURIComponent(namaLengkap.trim())}.webp`
   }
 
   return null
