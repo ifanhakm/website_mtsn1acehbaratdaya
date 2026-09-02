@@ -10,11 +10,10 @@ WORKDIR /app
 ARG NEXT_PUBLIC_SERVER_URL=https://mtsn1acehbaratdaya.sch.id
 ENV NEXT_TELEMETRY_DISABLED=1 \
     DATABASE_URI=postgresql://build:build@127.0.0.1:5432/build \
-    PAYLOAD_SECRET=build-only-secret-not-used-at-runtime \
     NEXT_PUBLIC_SERVER_URL=${NEXT_PUBLIC_SERVER_URL}
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN PAYLOAD_SECRET=build-only-secret-not-used-at-runtime npm run build
 
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app
