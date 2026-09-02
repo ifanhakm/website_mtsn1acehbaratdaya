@@ -6,14 +6,7 @@ import DirektoriStafClient, { type StaffMember } from './StafClient'
 
 export default async function DirektoriStafPage() {
   await connection()
-
-  let staffData: StaffMember[] = []
-
-  try {
-    staffData = await getStaff()
-  } catch (error) {
-    console.error('Direktori staf gagal dimuat:', error instanceof Error ? error.message : 'unknown')
-  }
+  const staffData: StaffMember[] = await getStaff()
 
   return (
     <DirektoriStafClient staffData={staffData} />

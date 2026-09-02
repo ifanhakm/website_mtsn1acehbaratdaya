@@ -146,12 +146,7 @@ function RichTextRenderer({ content }: { content: string | LexicalContent }) {
 // =========================================================================
 export default async function DetailBeritaPage({ params }: RouteParams) {
   const { slug } = await params
-  let berita = null
-  try {
-    berita = await getPublishedNewsBySlug(slug)
-  } catch (error) {
-    console.error('Detail berita tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
-  }
+  const berita = await getPublishedNewsBySlug(slug)
 
   if (!berita) {
     notFound()

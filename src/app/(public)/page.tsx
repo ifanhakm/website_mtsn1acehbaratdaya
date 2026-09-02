@@ -44,13 +44,7 @@ const getImageUrl = (imageField: number | ImageFieldObject | string | null | und
 export default async function HomePage() {
   await connection()
 
-  let latestNews: Berita[] = []
-
-  try {
-    latestNews = (await getHomeNews()).filter((news) => Boolean(news.slug))
-  } catch (error) {
-    console.error('Berita beranda tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
-  }
+  const latestNews: Berita[] = (await getHomeNews()).filter((news) => Boolean(news.slug))
 
   // Statistik Sekolah (Statis)
   const stats = [

@@ -19,10 +19,7 @@ const documentRecordSchema = z.object({
 export default async function DownloadCenterPage() {
   await connection()
 
-  let dbDocuments: DocumentItem[] = []
-
-  try {
-    dbDocuments = (await getDocuments()).flatMap((value) => {
+  const dbDocuments: DocumentItem[] = (await getDocuments()).flatMap((value) => {
       const parsed = documentRecordSchema.safeParse(value)
       if (!parsed.success) return []
       const doc = parsed.data
@@ -48,9 +45,6 @@ export default async function DownloadCenterPage() {
         badge: doc.badge || undefined,
       }]
     })
-  } catch (error) {
-    console.error("Gagal menarik data dokumen dari database Supabase:", error)
-  }
 
   return (
     // 4. Oper dokumen dinamis ke Client Component

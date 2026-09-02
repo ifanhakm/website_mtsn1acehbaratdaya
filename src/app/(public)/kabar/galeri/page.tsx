@@ -7,10 +7,7 @@ import GaleriClient, { type GaleriItem } from './GaleriClient'
 export default async function KabarGaleriPage() {
   await connection()
 
-  let dbGaleri: GaleriItem[] = []
-
-  try {
-    dbGaleri = (await getGalleryEntries()).map((doc) => {
+  const dbGaleri: GaleriItem[] = (await getGalleryEntries()).map((doc) => {
       // Dapatkan URL gambar dinamis dari Supabase Storage jika media terhubung
       const imageUrl = doc.image && typeof doc.image === 'object' 
         ? (doc.image.url || null) 
@@ -26,9 +23,6 @@ export default async function KabarGaleriPage() {
         aspectRatio: doc.aspectRatio || 'aspect-video',
       }
     })
-  } catch (error) {
-    console.error("Gagal menarik data galeri dari database Supabase:", error)
-  }
 
   return (
     // 4. Kirimkan data ke Client Component

@@ -1,8 +1,8 @@
 # 🕌 Website Resmi MTsN 1 Aceh Barat Daya
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16.3-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Payload CMS](https://img.shields.io/badge/Payload_CMS-3.88_Stable-000000?style=for-the-badge&logo=payload)](https://payloadcms.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Supabase-316192?style=for-the-badge&logo=postgresql)](https://supabase.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 
@@ -85,7 +85,7 @@ website_mtsn1acehbaratdaya/
 │   │   │   │   ├── sejarah/page.tsx   # Sejarah berdirinya madrasah sejak 1969
 │   │   │   │   ├── visi-misi/page.tsx # Visi, misi, dan pilar komitmen
 │   │   │   │   └── staf/
-│   │   │   │       ├── page.tsx       # Server Component: Penarikan data staf dari Supabase
+│   │   │   │       ├── page.tsx       # Server Component: Penarikan data staf melalui Payload
 │   │   │   │       └── StafClient.tsx # Client Component: Filter, search, dan grid portrait 3:4
 │   │   │   ├── kabar/
 │   │   │   │   ├── berita/
@@ -95,7 +95,7 @@ website_mtsn1acehbaratdaya/
 │   │   │   │   └── galeri/
 │   │   │   │       ├── GaleriClient.tsx # Client Component: Grid galeri foto dengan filter
 │   │   │   │       └── page.tsx       # Galeri foto kegiatan sekolah
-│   │   │   ├── health/route.ts        # Liveness endpoint untuk container
+│   │   │   ├── health/route.ts        # Readiness endpoint aplikasi dan database
 │   │   │   ├── layanan/               # Portal Layanan Terintegrasi
 │   │   │   │   ├── LayananClient.tsx  # Client Component: Daftar layanan terpadu
 │   │   │   │   ├── page.tsx           # Server Component: Portal layanan utama

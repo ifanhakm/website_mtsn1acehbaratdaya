@@ -110,6 +110,7 @@ export default buildConfig({
       bucket: env.SUPABASE_BUCKET_NAME || 'local-development',
       collections: {
         media: {
+          prefix: 'media',
           disablePayloadAccessControl: true,
           generateFileURL: ({ filename, prefix }) => getSupabasePublicUrl(filename, prefix),
         },

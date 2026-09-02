@@ -17,10 +17,7 @@ interface ServiceItemRecord {
 export default async function LayananPortalPage() {
   await connection()
 
-  let dbLayanan: LayananCategory[] = []
-
-  try {
-    dbLayanan = (await getServiceCategories()).map((doc) => ({
+  const dbLayanan: LayananCategory[] = (await getServiceCategories()).map((doc) => ({
       categoryName: doc.name,
       categoryDesc: doc.description,
       items: (doc.items || []).flatMap((item: ServiceItemRecord) => {
@@ -37,9 +34,6 @@ export default async function LayananPortalPage() {
         }]
       })
     }))
-  } catch (error) {
-    console.error("Gagal menarik data kategori layanan dari database Supabase:", error)
-  }
 
   return (
     // 4. Kirimkan data ke Client Component (dengan smart fallback di dalamnya jika data db kosong)
