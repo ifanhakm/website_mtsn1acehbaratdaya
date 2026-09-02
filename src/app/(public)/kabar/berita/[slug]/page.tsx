@@ -1,12 +1,11 @@
 // Path: src/app/(public)/kabar/berita/[slug]/page.tsx
-import React, { cache } from 'react'
+import React from 'react'
 import type { Metadata } from 'next'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { ChevronRight, Calendar, User, Clock, ArrowLeft } from 'lucide-react'
+import { getPublishedNewsBySlug } from '@/lib/publicData'
 
 interface RouteParams {
   params: Promise<{
@@ -26,30 +25,14 @@ interface LexicalNode {
   children?: LexicalNode[]
 }
 
-const getPublishedNews = cache(async (slug: string) => {
-  try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'berita',
-      where: {
-        and: [
-          { slug: { equals: slug } },
-          { status: { equals: 'published' } },
-        ],
-      },
-      depth: 1,
-      limit: 1,
-    })
-    return result.docs[0] ?? null
-  } catch (error) {
-    console.error('Detail berita tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
-    return null
-  }
-})
-
 export async function generateMetadata({ params }: RouteParams): Promise<Metadata> {
   const { slug } = await params
-  const berita = await getPublishedNews(slug)
+  let berita = null
+  try {
+    berita = await getPublishedNewsBySlug(slug)
+  } catch (error) {
+    console.error('Metadata berita tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
+  }
 
   if (!berita) return { title: 'Berita tidak ditemukan' }
 
@@ -163,7 +146,12 @@ function RichTextRenderer({ content }: { content: string | LexicalContent }) {
 // =========================================================================
 export default async function DetailBeritaPage({ params }: RouteParams) {
   const { slug } = await params
-  const berita = await getPublishedNews(slug)
+  let berita = null
+  try {
+    berita = await getPublishedNewsBySlug(slug)
+  } catch (error) {
+    console.error('Detail berita tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
+  }
 
   if (!berita) {
     notFound()

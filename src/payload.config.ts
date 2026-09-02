@@ -17,35 +17,15 @@ import { Dokumen } from './cms/collections/Dokumen'
 import { KategoriLayanan } from './cms/collections/KategoriLayanan'
 import { Galeri } from './cms/collections/Galeri'
 import { cloudStorageEnabled, env } from './lib/env'
+import { createDatabaseSslConfig } from './lib/databaseSsl'
+import { migrations } from './migrations'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
-let sslConfig: false | { rejectUnauthorized: boolean; ca?: string } = false
-
-if (env.DATABASE_SSL === 'true') {
-  try {
-    // Gunakan path.join dan process.cwd() agar jalurnya presisi di sistem operasi apa pun (Windows/Linux VPS)
-    const certPath = path.join(process.cwd(), 'certs', 'supabase-ca.crt')
-    
-    if (fs.existsSync(certPath)) {
-      sslConfig = {
-        rejectUnauthorized: true, 
-        ca: fs.readFileSync(certPath, 'utf8'),
-      }
-      console.log('Sistem Keamanan SSL Supabase CA Aktif & Terverifikasi!')
-    } else {
-      console.warn('File certs/supabase-ca.crt tidak ditemukan. Menggunakan SSL fallback.')
-      sslConfig = {
-        rejectUnauthorized: false,
-      }
-    }
-  } catch (error) {
-    console.error('Gagal memuat sertifikat SSL database:', error)
-    sslConfig = {
-      rejectUnauthorized: false,
-    }
-  }
-}
+const certificateAuthority = env.DATABASE_SSL === 'true'
+  ? fs.readFileSync(path.join(process.cwd(), 'certs', 'supabase-ca.crt'), 'utf8')
+  : undefined
+const sslConfig = createDatabaseSslConfig(env.DATABASE_SSL, certificateAuthority)
 
 export default buildConfig({
   serverURL: env.NEXT_PUBLIC_SERVER_URL,
@@ -95,8 +75,10 @@ export default buildConfig({
   },
   // Hubungkan ke Supabase PostgreSQL melalui Variabel Lingkungan (.env.local)
   db: postgresAdapter({
+    push: env.ALLOW_DEV_SCHEMA_PUSH === 'true',
+    prodMigrations: env.RUN_DATABASE_MIGRATIONS === 'true' ? migrations : undefined,
     pool: {
-      connectionString: process.env.DATABASE_URI,
+      connectionString: env.DATABASE_URI,
       ssl: sslConfig,
     },
   }),

@@ -1,5 +1,10 @@
 // Path: src/collections/KategoriLayanan.ts
-import { CollectionConfig } from 'payload'
+import type { CollectionConfig, TextFieldValidation } from 'payload'
+import { validateServiceHref } from '../../lib/serviceUrl'
+import { revalidatePublicTags } from '../../lib/revalidate'
+
+const validateHref: TextFieldValidation = (value, { siblingData }) =>
+  validateServiceHref(value, (siblingData as { isExternal?: boolean }).isExternal ?? true)
 
 export const KategoriLayanan: CollectionConfig = {
   slug: 'kategori-layanan',
@@ -16,6 +21,10 @@ export const KategoriLayanan: CollectionConfig = {
     create: ({ req: { user } }) => !!user, // Hanya admin yang login bisa mengelola
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => !!user,
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('kategori-layanan'); return doc }],
+    afterDelete: [({ doc }) => { revalidatePublicTags('kategori-layanan'); return doc }],
   },
   fields: [
     {
@@ -63,6 +72,7 @@ export const KategoriLayanan: CollectionConfig = {
           type: 'text',
           label: 'Alamat Link Tujuan (URL)',
           required: true,
+          validate: validateHref,
           admin: {
             description: 'Bisa link internal (seperti "/layanan/unduh") atau eksternal (seperti "https://rdm.kemenag.go.id")',
           },

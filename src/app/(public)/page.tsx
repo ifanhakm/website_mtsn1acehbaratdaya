@@ -1,9 +1,10 @@
 import React from 'react'
 import PosterCampaign from '@/components/PosterCampaign'
 import Link from 'next/link'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import Image from 'next/image'
+import { connection } from 'next/server'
 import type { Berita } from '@/payload-types'
+import { getHomeNews } from '@/lib/publicData'
 import { 
   ArrowRight, 
   BookOpen, 
@@ -41,23 +42,15 @@ const getImageUrl = (imageField: number | ImageFieldObject | string | null | und
 }
 
 export default async function HomePage() {
-  // 1. Inisialisasi Payload Instance di Server Side (Menggunakan alias resmi @payload-config agar bebas dari eror compile!)
-  const payload = await getPayload({ config })
+  await connection()
 
-  // 2. Tarik 3 Berita Terbaru yang berstatus 'published' dari Supabase
-  const result = await payload.find({
-    collection: 'berita',
-    where: {
-      status: {
-        equals: 'published',
-      },
-    },
-    sort: '-date', // Urutkan dari berita terbaru
-    limit: 3,      // Batasi hanya 3 berita untuk preview di beranda
-    depth: 1,      // Ambil relasi media/gambar utuh
-  })
+  let latestNews: Berita[] = []
 
-  const latestNews = result.docs
+  try {
+    latestNews = (await getHomeNews()).filter((news) => Boolean(news.slug))
+  } catch (error) {
+    console.error('Berita beranda tidak dapat dimuat', error instanceof Error ? error.message : 'unknown')
+  }
 
   // Statistik Sekolah (Statis)
   const stats = [
@@ -119,11 +112,13 @@ export default async function HomePage() {
               <div className="relative mx-auto max-w-md lg:max-w-none">
                 <div className="absolute -inset-1.5 bg-gradient-to-tr from-brand-gold to-brand-green rounded-2xl blur opacity-30 -z-10" />
                 <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-gray-100 border border-gray-100 shadow-2xl">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src="/fotogedung.jpeg" 
+                  <Image
+                    src="/fotogedung.jpeg"
                     alt="Gedung MTsN 1 Aceh Barat Daya" 
-                    className="object-cover w-full h-full transform hover:scale-105 transition-transform duration-500"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 42vw"
+                    className="object-cover transform hover:scale-105 transition-transform duration-500"
+                    priority
                   />
                 </div>
                 {/* Lencana Floating */}
@@ -181,10 +176,12 @@ export default async function HomePage() {
               <div className="relative w-full max-w-xs sm:max-w-sm">
                 <div className="absolute -inset-1 bg-brand-green/20 rounded-2xl -rotate-3 transform -z-10" />
                 <div className="aspect-[3/4] overflow-hidden rounded-2xl border-4 border-white shadow-xl bg-gray-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={kepsekFotoUrl} 
+                  <Image
+                    src={kepsekFotoUrl}
                     alt="Kepala Madrasah MTsN 1 Abdya" 
+                    width={800}
+                    height={1067}
+                    sizes="(max-width: 768px) 100vw, 384px"
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -318,11 +315,12 @@ export default async function HomePage() {
               {latestNews.map((news: Berita) => (
                 <article key={news.id} className="bg-white rounded-2xl border border-gray-150 overflow-hidden shadow-sm flex flex-col hover:shadow-md transition-shadow group">
                   <div className="relative aspect-video bg-gray-100 overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={getImageUrl(news.image)} 
+                    <Image
+                      src={getImageUrl(news.image)}
                       alt={news.title} 
-                      className="object-cover w-full h-full transform group-hover:scale-105 transition-transform duration-300"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover transform group-hover:scale-105 transition-transform duration-300"
                     />
                     <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-brand-green border border-gray-100">
                       {news.category}

@@ -6,6 +6,14 @@ const isDev = process.env.NODE_ENV === 'development'
 
 const remotePatterns: NonNullable<NextConfig['images']>['remotePatterns'] = []
 
+// Supabase project dan storage endpoint menggunakan subdomain supabase.co.
+// Pola ini harus tersedia saat build karena konfigurasi Image tidak berubah saat runtime.
+remotePatterns.push({
+  protocol: 'https',
+  hostname: '**.supabase.co',
+  pathname: '/**',
+})
+
 if (isDev) {
   remotePatterns.push(
     {

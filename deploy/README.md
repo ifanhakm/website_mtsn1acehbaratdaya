@@ -36,3 +36,24 @@ nama domain HTTPS, ubah `NEXT_PUBLIC_SERVER_URL` pada `.env.production`, lalu ja
 docker compose --env-file .env.deploy up -d
 ```
 
+## Migrasi database
+
+Skema produksi dikelola oleh migrasi di `src/migrations`. Untuk database baru,
+set `RUN_DATABASE_MIGRATIONS=true` pada `.env.production`; aplikasi akan
+menjalankan migrasi yang belum tercatat sebelum menerima request.
+
+Pertahankan `ALLOW_DEV_SCHEMA_PUSH=false` untuk database production. Opsi ini
+hanya boleh diaktifkan sementara pada database development yang terpisah.
+
+Database lama yang sebelumnya dibuat melalui schema push development harus
+dibaseline satu kali sebelum opsi tersebut diaktifkan:
+
+1. Buat backup PostgreSQL/Supabase.
+2. Pastikan skema database sudah sama dengan commit yang akan dideploy.
+3. Hapus hanya catatan development migration (`batch = -1`) dari tabel
+   `payload_migrations`; jangan menghapus tabel atau data aplikasi.
+4. Set `RUN_DATABASE_MIGRATIONS=true` dan deploy. Migrasi awal mendeteksi tabel
+   yang sudah ada dan hanya dicatat sebagai baseline.
+
+Setelah baseline, setiap perubahan koleksi wajib disertai migrasi baru melalui
+`npm run payload -- migrate:create nama_perubahan`.

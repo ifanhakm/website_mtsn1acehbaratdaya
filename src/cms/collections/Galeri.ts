@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload'
+import { revalidatePublicTags } from '../../lib/revalidate'
 
 export const Galeri: CollectionConfig = {
   slug: 'galeri',
@@ -15,6 +16,10 @@ export const Galeri: CollectionConfig = {
     create: ({ req: { user } }) => !!user, // Hanya admin yang login bisa mengelola
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => !!user,
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('galeri'); return doc }],
+    afterDelete: [({ doc }) => { revalidatePublicTags('galeri'); return doc }],
   },
   fields: [
     {

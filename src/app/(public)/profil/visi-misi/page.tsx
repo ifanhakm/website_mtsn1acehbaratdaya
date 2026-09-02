@@ -2,8 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getSchoolProfile } from '@/lib/publicData'
 
 import { 
   Award, 
@@ -119,11 +118,7 @@ export default async function VisiMisiPage() {
   let dbTujuan: string[] = []
 
   try {
-    const payload = await getPayload({ config })
-    const profil = await payload.findGlobal({
-      slug: 'profil-sekolah',
-      depth: 1,
-    })
+    const profil = await getSchoolProfile()
 
     if (profil) {
       if (profil.visi) dbVisi = profil.visi

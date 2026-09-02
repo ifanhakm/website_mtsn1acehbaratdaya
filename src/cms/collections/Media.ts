@@ -1,5 +1,6 @@
 // Path: src/cms/collections/Media.ts
 import { CollectionConfig } from 'payload';
+import { revalidatePublicTags } from '../../lib/revalidate';
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -12,6 +13,10 @@ export const Media: CollectionConfig = {
     create: ({ req: { user } }) => !!user, // Hanya admin/humas yang login yang bisa upload
     update: ({ req: { user } }) => !!user,
     delete: ({ req: { user } }) => !!user,
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('berita', 'galeri', 'staf'); return doc }],
+    afterDelete: [({ doc }) => { revalidatePublicTags('berita', 'galeri', 'staf'); return doc }],
   },
   // Mengaktifkan fitur Upload berkas bawaan Payload CMS v3
   upload: {

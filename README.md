@@ -181,12 +181,21 @@ npm install
 
 ### 4. Konfigurasi Variabel Lingkungan (`.env.local`)
 Buat berkas bernama **`.env.local`** di root folder dan lengkapi kredensial Supabase Anda:
+
+> File hasil unduhan seperti `.env.download` tidak dibaca otomatis oleh Next.js.
+> Salin ke `.env.local` untuk pengembangan atau ke `deploy/.env.production`
+> untuk deployment. Gunakan `SCHOOL_EMAIL`, bukan `NEXT_PUBLIC_SCHOOL_EMAIL`,
+> dan jangan menyimpan `SUPABASE_SERVICE_ROLE_KEY` jika aplikasi tidak memakainya.
+
 ```env
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 DATABASE_URI=postgresql://postgres.[ID_PROYEK_SUPABASE]:[PASS_DB]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true
 PAYLOAD_SECRET=buat-string-acak-panjang-apa-saja-untuk-pengamanan-token
 SCHOOL_EMAIL=website.mtsn1abdya@gmail.com
 RESEND_API_KEY=re_xxxxxxxxx
+DATABASE_SSL=true
+ALLOW_DEV_SCHEMA_PUSH=false
+RUN_DATABASE_MIGRATIONS=false
 SUPABASE_URL=https://[ID_PROYEK_SUPABASE].supabase.co
 SUPABASE_BUCKET_NAME=media
 SUPABASE_S3_ENDPOINT=https://[ID_PROYEK_SUPABASE].storage.supabase.co/storage/v1/s3

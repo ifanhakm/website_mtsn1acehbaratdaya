@@ -1,8 +1,7 @@
 // Path: src/app/(public)/profil/staf/page.tsx
 import React from 'react'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getStaff } from '@/lib/publicData'
 import DirektoriStafClient, { type StaffMember } from './StafClient'
 
 export default async function DirektoriStafPage() {
@@ -11,15 +10,7 @@ export default async function DirektoriStafPage() {
   let staffData: StaffMember[] = []
 
   try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'staf',
-      sort: 'urutan',
-      depth: 1,
-      overrideAccess: false,
-      limit: 60,
-    })
-    staffData = result.docs.map((member) => ({
+    staffData = (await getStaff()).map((member) => ({
       id: member.id,
       namaLengkap: member.namaLengkap,
       nip: member.nip,

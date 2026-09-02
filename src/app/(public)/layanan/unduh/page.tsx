@@ -1,10 +1,9 @@
 // Path: src/app/(public)/layanan/unduh/page.tsx
 import React from 'react'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 import UnduhClient, { type DocumentItem } from './UnduhClient'
 import { z } from 'zod'
+import { getDocuments } from '@/lib/publicData'
 
 const documentRecordSchema = z.object({
   id: z.union([z.string(), z.number()]),
@@ -23,17 +22,7 @@ export default async function DownloadCenterPage() {
   let dbDocuments: DocumentItem[] = []
 
   try {
-    // 1. Inisialisasi Payload di Sisi Server
-    const payload = await getPayload({ config })
-
-    // 2. Tarik daftar berkas dokumen yang diunggah dari Supabase
-    const result = await payload.find({
-      collection: 'dokumen',
-      limit: 100, // Batas maksimal pengambilan dokumen sekaligus
-    })
-
-    // 3. Konversi format data Payload ke format props yang ramah bagi Client Component
-    dbDocuments = result.docs.flatMap((value) => {
+    dbDocuments = (await getDocuments()).flatMap((value) => {
       const parsed = documentRecordSchema.safeParse(value)
       if (!parsed.success) return []
       const doc = parsed.data

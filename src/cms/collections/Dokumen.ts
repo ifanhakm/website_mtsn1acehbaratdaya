@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload';
+import { revalidatePublicTags } from '../../lib/revalidate';
 
 export const Dokumen: CollectionConfig = {
   slug: 'dokumen',
@@ -19,6 +20,17 @@ export const Dokumen: CollectionConfig = {
   // Mengaktifkan fitur upload berkas khusus dokumen
   upload: {
     staticDir: 'public/documents', // Tempat menyimpan file fisik secara lokal di laptop
+    mimeTypes: [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ],
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('dokumen'); return doc }],
+    afterDelete: [({ doc }) => { revalidatePublicTags('dokumen'); return doc }],
   },
   fields: [
     {

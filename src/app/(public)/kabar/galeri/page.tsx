@@ -1,8 +1,7 @@
 // Path: src/app/(public)/kabar/galeri/page.tsx
 import React from 'react'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getGalleryEntries } from '@/lib/publicData'
 import GaleriClient, { type GaleriItem } from './GaleriClient'
 
 export default async function KabarGaleriPage() {
@@ -11,18 +10,7 @@ export default async function KabarGaleriPage() {
   let dbGaleri: GaleriItem[] = []
 
   try {
-    // 1. Inisialisasi Payload di Sisi Server
-    const payload = await getPayload({ config })
-
-    // 2. Tarik daftar galeri foto dari Supabase
-    const result = await payload.find({
-      collection: 'galeri',
-      limit: 100, // Ambil hingga 100 foto teratas
-      sort: '-createdAt', // Urutan terbaru di atas
-    })
-
-    // 3. Konversi format data database ke format props GaleriClient
-    dbGaleri = result.docs.map((doc) => {
+    dbGaleri = (await getGalleryEntries()).map((doc) => {
       // Dapatkan URL gambar dinamis dari Supabase Storage jika media terhubung
       const imageUrl = doc.image && typeof doc.image === 'object' 
         ? (doc.image.url || null) 

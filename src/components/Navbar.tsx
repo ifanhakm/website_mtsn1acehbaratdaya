@@ -215,7 +215,9 @@ export default function Navbar() {
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="inline-flex items-center justify-center rounded-lg p-2 text-gray-500 hover:bg-gray-50 hover:text-brand-green focus:outline-none"
-              aria-label="Toggle menu"
+              aria-label={isOpen ? "Tutup menu navigasi" : "Buka menu navigasi"}
+              aria-expanded={isOpen}
+              aria-controls="mobile-navigation"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -225,6 +227,9 @@ export default function Navbar() {
 
       {/* MOBILE MENU PANEL */}
       <div
+        id="mobile-navigation"
+        aria-hidden={!isOpen}
+        inert={!isOpen ? true : undefined}
         className={`lg:hidden transition-all duration-300 ease-in-out border-t border-gray-100 bg-white ${
           isOpen ? "max-h-[calc(100vh-80px)] opacity-100 overflow-y-auto" : "max-h-0 opacity-0 overflow-hidden"
         }`}
@@ -249,6 +254,8 @@ export default function Navbar() {
                   <button
                     onClick={() => toggleDropdown(item.label)}
                     className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-base font-bold text-gray-700 hover:bg-gray-50 hover:text-brand-green focus:outline-none"
+                    aria-expanded={activeDropdown === item.label}
+                    aria-controls={`mobile-submenu-${item.label.toLowerCase()}`}
                   >
                     <span>{item.label}</span>
                     <ChevronDown
@@ -258,6 +265,7 @@ export default function Navbar() {
                     />
                   </button>
                   <div
+                    id={`mobile-submenu-${item.label.toLowerCase()}`}
                     className={`mt-1 pl-4 space-y-1 transition-all duration-300 ${
                       activeDropdown === item.label ? "block" : "hidden"
                     }`}

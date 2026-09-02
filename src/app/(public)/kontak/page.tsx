@@ -12,8 +12,7 @@ import {
   ChevronDown,
   ExternalLink,
   MessageSquare,
-  AlertCircle,
-  Phone
+  AlertCircle
 } from "lucide-react";
 import { sendContactEmail } from "./actions"; // 👈 Impor Server Action Resend baru kita!
 
@@ -181,22 +180,6 @@ export default function KontakPage() {
                     <span>Buka Google Maps</span>
                     <ExternalLink className="w-3 h-3" />
                   </a>
-                </div>
-              </div>
-
-              {/* Kontak Telefon */}
-              <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs hover:shadow-md transition-all duration-300 flex gap-4">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-green/10 text-brand-green">
-                  <Phone className="w-5 h-5" />
-                </div>
-                <div className="flex flex-col gap-1">
-                  <h4 className="text-sm font-extrabold text-gray-800">Telepon & WhatsApp</h4>
-                  {/* <p className="text-xs text-gray-500 leading-relaxed font-semibold">
-                    +62 811-XXXX-XXXX (Humas Madrasah)
-                  </p> */}
-                  <span className="text-[10px] text-gray-400 font-bold">
-                    Melayani telepon & pesan singkat selama jam kerja.
-                  </span>
                 </div>
               </div>
 

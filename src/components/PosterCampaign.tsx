@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { X, Eye, ZoomIn, Download } from 'lucide-react'
 import Image from 'next/image'
 
@@ -33,13 +33,37 @@ const posters = [
 
 export default function PosterCampaign() {
   const [activePoster, setActivePoster] = useState<typeof posters[0] | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  const closePoster = () => {
+    setActivePoster(null)
+    window.setTimeout(() => triggerRef.current?.focus(), 0)
+  }
 
   // Efek keyboard Escape untuk menutup modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActivePoster(null)
+      if (e.key === 'Escape') closePoster()
+      if (e.key === 'Tab' && dialogRef.current) {
+        const focusable = Array.from(
+          dialogRef.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
+        )
+        const first = focusable[0]
+        const last = focusable.at(-1)
+
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault()
+          last?.focus()
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault()
+          first?.focus()
+        }
+      }
     }
     if (activePoster) {
+      closeButtonRef.current?.focus()
       window.addEventListener('keydown', handleKeyDown)
       // Kunci scroll pada halaman utama saat modal aktif
       document.body.style.overflow = 'hidden'
@@ -49,6 +73,11 @@ export default function PosterCampaign() {
       document.body.style.overflow = 'unset'
     }
   }, [activePoster])
+
+  const openPoster = (poster: typeof posters[0], trigger: HTMLButtonElement) => {
+    triggerRef.current = trigger
+    setActivePoster(poster)
+  }
 
   return (
     <div className="mt-20 pt-16 border-t border-gray-200/60">
@@ -65,10 +94,12 @@ export default function PosterCampaign() {
       {/* 2. GRID KARTU POSTER */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
         {posters.map((poster) => (
-          <div 
+          <button
+            type="button"
             key={poster.id} 
-            className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
-            onClick={() => setActivePoster(poster)}
+            className="group bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-green"
+            onClick={(event) => openPoster(poster, event.currentTarget)}
+            aria-haspopup="dialog"
           >
             <div className="relative aspect-[3/4] bg-gray-50 overflow-hidden">
               <Image 
@@ -77,7 +108,6 @@ export default function PosterCampaign() {
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transform group-hover:scale-105 transition-transform duration-500"
-                priority={poster.id === 1}
               />
               {/* Efek Hover Masking dengan Zoom Icon */}
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-2 text-white z-10">
@@ -98,18 +128,14 @@ export default function PosterCampaign() {
                   {poster.title}
                 </h4>
               </div>
-              <button 
-                onClick={(e) => {
-                  e.stopPropagation() // Mencegah terpicunya onClick milik wrapper card
-                  setActivePoster(poster)
-                }}
+              <span
                 className="mt-4 inline-flex items-center justify-center gap-1.5 text-xs font-bold text-brand-green hover:text-white py-2.5 px-3 bg-brand-green/5 hover:bg-brand-green rounded-lg transition-all duration-200 w-full"
               >
                 <Eye className="w-3.5 h-3.5" />
                 Detail & Perbesar
-              </button>
+              </span>
             </div>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -117,11 +143,17 @@ export default function PosterCampaign() {
       {activePoster && (
         <div 
           className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-opacity duration-300 animate-fade-in"
-          onClick={() => setActivePoster(null)}
+          onClick={closePoster}
+          ref={dialogRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="poster-dialog-title"
+          aria-describedby="poster-dialog-description"
         >
           {/* Tombol X Close Floating */}
           <button 
-            onClick={() => setActivePoster(null)}
+            ref={closeButtonRef}
+            onClick={closePoster}
             className="absolute top-6 right-6 p-2 rounded-full bg-white/10 hover:bg-white/25 text-white transition-colors duration-200 focus:outline-none"
             aria-label="Tutup"
           >
@@ -152,10 +184,10 @@ export default function PosterCampaign() {
                   {activePoster.tag}
                 </span>
                 <div className="space-y-3">
-                  <h4 className="text-xl sm:text-2xl font-bold leading-tight">
+                  <h4 id="poster-dialog-title" className="text-xl sm:text-2xl font-bold leading-tight">
                     {activePoster.title}
                   </h4>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p id="poster-dialog-description" className="text-sm text-gray-600 leading-relaxed">
                     {activePoster.desc}
                   </p>
                 </div>
@@ -165,14 +197,14 @@ export default function PosterCampaign() {
               <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
                 <a 
                   href={activePoster.src} 
-                  download={`poster-${activePoster.tag.toLowerCase().replace(' ', '-')}.png`}
+                  download={`poster-${activePoster.tag.toLowerCase().replace(/\s+/g, '-')}.png`}
                   className="inline-flex items-center justify-center gap-2 text-xs font-bold bg-brand-green hover:bg-brand-green-light text-white py-3 px-4 rounded-xl transition-colors duration-200 flex-1"
                 >
                   <Download className="w-4 h-4" />
                   Unduh Poster Resmi
                 </a>
                 <button 
-                  onClick={() => setActivePoster(null)}
+                  onClick={closePoster}
                   className="inline-flex items-center justify-center gap-2 text-xs font-bold border border-gray-200 hover:bg-gray-50 text-gray-700 py-3 px-4 rounded-xl transition-all duration-200"
                 >
                   Tutup

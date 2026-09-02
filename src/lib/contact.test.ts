@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { checkContactRateLimit, contactSchema, escapeHtml } from './contact'
+import { buildContactEmailHtml, checkContactRateLimit, contactSchema, escapeHtml } from './contact'
 
 const validContact = {
   nama: 'Budi Santoso',
   email: 'budi@example.com',
-  kategori: 'Wali Murid',
+  kategori: 'Wali Murid' as const,
   subjek: 'Pertanyaan administrasi',
   pesan: 'Mohon informasi mengenai persyaratan administrasi.',
   website: '',
@@ -28,6 +28,20 @@ describe('escapeHtml', () => {
     expect(escapeHtml('<a href="x">O\'Reilly & teman</a>')).toBe(
       '&lt;a href=&quot;x&quot;&gt;O&#39;Reilly &amp; teman&lt;/a&gt;',
     )
+  })
+})
+
+describe('buildContactEmailHtml', () => {
+  it('tidak menyisipkan markup pengguna ke email', () => {
+    const html = buildContactEmailHtml({
+      ...validContact,
+      nama: '<img src=x onerror=alert(1)>',
+      pesan: '<script>alert(1)</script>',
+    })
+
+    expect(html).not.toContain('<script>')
+    expect(html).not.toContain('<img src=x')
+    expect(html).toContain('&lt;script&gt;alert(1)&lt;/script&gt;')
   })
 })
 

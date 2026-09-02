@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getPublishedNews } from '@/lib/publicData'
 
 const staticRoutes = [
   '',
@@ -18,7 +17,7 @@ const staticRoutes = [
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   await connection()
 
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const baseUrl = (process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000').replace(/\/+$/, '')
   const routes: MetadataRoute.Sitemap = staticRoutes.map((route) => ({
     url: `${baseUrl}${route}`,
     changeFrequency: route === '' ? 'weekly' : 'monthly',
@@ -26,17 +25,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }))
 
   try {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'berita',
-      where: { status: { equals: 'published' } },
-      limit: 1_000,
-      pagination: false,
-      select: { slug: true, updatedAt: true },
-    })
-
     routes.push(
-      ...result.docs.flatMap((news) =>
+      ...(await getPublishedNews()).flatMap((news) =>
         news.slug
           ? [{
               url: `${baseUrl}/kabar/berita/${news.slug}`,

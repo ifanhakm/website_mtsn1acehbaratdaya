@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload'
+import { revalidatePublicTags } from '../../lib/revalidate'
 
 export const Staf: CollectionConfig = {
   slug: 'staf',
@@ -12,6 +13,10 @@ export const Staf: CollectionConfig = {
   },
   access: {
     read: () => true, // Mengizinkan semua pengunjung melihat data guru & staf
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('staf'); return doc }],
+    afterDelete: [({ doc }) => { revalidatePublicTags('staf'); return doc }],
   },
   fields: [
     {

@@ -1,4 +1,5 @@
 import { GlobalConfig } from 'payload';
+import { revalidatePublicTags } from '../../lib/revalidate';
 
 export const ProfilSekolah: GlobalConfig = {
   slug: 'profil-sekolah',
@@ -6,6 +7,9 @@ export const ProfilSekolah: GlobalConfig = {
   access: {
     read: () => true, // Semua pengunjung umum dapat membaca data ini
     update: ({ req: { user } }) => !!user, // Hanya admin yang login yang bisa edit
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('profil-sekolah'); return doc }],
   },
   fields: [
     {

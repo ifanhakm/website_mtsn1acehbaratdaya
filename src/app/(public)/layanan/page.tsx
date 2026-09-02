@@ -1,9 +1,9 @@
 // Path: src/app/(public)/layanan/page.tsx
 import React from 'react'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
 import LayananClient, { type LayananCategory, type LayananItem } from './LayananClient'
+import { validateServiceHref } from '@/lib/serviceUrl'
+import { getServiceCategories } from '@/lib/publicData'
 
 interface ServiceItemRecord {
   title: string
@@ -20,28 +20,22 @@ export default async function LayananPortalPage() {
   let dbLayanan: LayananCategory[] = []
 
   try {
-    // 1. Inisialisasi Payload di Sisi Server
-    const payload = await getPayload({ config })
-
-    // 2. Tarik daftar kategori dan link layanan dari Supabase
-    const result = await payload.find({
-      collection: 'kategori-layanan',
-      limit: 50, // Batas maksimal kategori
-      sort: 'createdAt',
-    })
-
-    // 3. Petakan format database ke dalam tipe format props LayananClient
-    dbLayanan = result.docs.map((doc) => ({
+    dbLayanan = (await getServiceCategories()).map((doc) => ({
       categoryName: doc.name,
       categoryDesc: doc.description,
-      items: (doc.items || []).map((item: ServiceItemRecord) => ({
-        title: item.title,
-        description: item.description,
-        href: item.href,
-        isExternal: item.isExternal ?? true,
-        icon: item.icon,
-        badge: item.badge || undefined,
-      }))
+      items: (doc.items || []).flatMap((item: ServiceItemRecord) => {
+        const isExternal = item.isExternal ?? true
+        if (validateServiceHref(item.href, isExternal) !== true) return []
+
+        return [{
+          title: item.title,
+          description: item.description,
+          href: item.href,
+          isExternal,
+          icon: item.icon,
+          badge: item.badge || undefined,
+        }]
+      })
     }))
   } catch (error) {
     console.error("Gagal menarik data kategori layanan dari database Supabase:", error)

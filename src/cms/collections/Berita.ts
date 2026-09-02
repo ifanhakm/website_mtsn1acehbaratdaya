@@ -1,4 +1,5 @@
 import { CollectionConfig } from 'payload';
+import { revalidatePublicTags } from '../../lib/revalidate';
 
 // Fungsi bantuan sederhana untuk membuat slug dari teks judul (Slugify)
 const slugify = (val: string): string => {
@@ -42,6 +43,10 @@ export const Berita: CollectionConfig = {
       // Hanya user yang login yang bisa menghapus berita
       return !!user;
     },
+  },
+  hooks: {
+    afterChange: [({ doc }) => { revalidatePublicTags('berita'); return doc }],
+    afterDelete: [({ doc }) => { revalidatePublicTags('berita'); return doc }],
   },
   fields: [
     {

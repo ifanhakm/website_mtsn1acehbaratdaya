@@ -2,8 +2,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { connection } from 'next/server'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+import { getSchoolProfile } from '@/lib/publicData'
 
 import { 
   Award, 
@@ -92,14 +91,7 @@ export default async function SejarahPage() {
   let dbTimeline: Array<{ year: string; title: string; description: string; badge: string }> = []
 
   try {
-    // A. Inisialisasi Payload Local API di Sisi Server
-    const payload = await getPayload({ config })
-
-    // B. Ambil data dari Global Profil Sekolah
-    const profil = await payload.findGlobal({
-      slug: 'profil-sekolah',
-      depth: 1,
-    })
+    const profil = await getSchoolProfile()
 
     // C. Parsing Intro Sejarah (sejarahPanjang)
     if (profil && profil.sejarahPanjang) {

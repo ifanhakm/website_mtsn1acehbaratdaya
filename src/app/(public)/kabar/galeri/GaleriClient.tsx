@@ -1,7 +1,7 @@
 // Path: src/app/(public)/kabar/galeri/GaleriClient.tsx
 "use client"
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Image as ImageIcon, Calendar, Tag, ChevronRight, X, Eye } from 'lucide-react'
@@ -125,6 +125,29 @@ interface GaleriClientProps {
 export default function GaleriClient({ dbGaleri }: GaleriClientProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>("semua")
   const [activeImage, setActiveImage] = useState<GaleriItem | null>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const triggerRef = useRef<HTMLButtonElement | null>(null)
+
+  const closeImage = () => {
+    setActiveImage(null)
+    window.setTimeout(() => triggerRef.current?.focus(), 0)
+  }
+
+  useEffect(() => {
+    if (!activeImage) return
+
+    closeButtonRef.current?.focus()
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeImage()
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [activeImage])
+
+  const openImage = (item: GaleriItem, trigger: HTMLButtonElement) => {
+    triggerRef.current = trigger
+    setActiveImage(item)
+  }
 
   // 2. GABUNGKAN DATA DATABASE DENGAN DEFAULT (MURNI CMS JIKA DEFAULT DI-NONAKTIFKAN)
   const finalGaleri = useMemo(() => {
@@ -210,10 +233,12 @@ export default function GaleriClient({ dbGaleri }: GaleriClientProps) {
         {filteredGaleri.length > 0 ? (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-6 space-y-6">
             {filteredGaleri.map((item) => (
-              <div
+              <button
+                type="button"
                 key={item.id}
-                onClick={() => setActiveImage(item)}
-                className="break-inside-avoid relative overflow-hidden rounded-2xl bg-white border border-gray-100 p-3 shadow-sm hover:shadow-xl hover:border-brand-green/20 group cursor-pointer transition-all duration-300"
+                onClick={(event) => openImage(item, event.currentTarget)}
+                className="break-inside-avoid relative overflow-hidden rounded-2xl bg-white border border-gray-100 p-3 shadow-sm hover:shadow-xl hover:border-brand-green/20 group cursor-pointer transition-all duration-300 w-full text-left focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-green"
+                aria-haspopup="dialog"
               >
                 {/* Visual Kontainer Gambar (Masonry Style / Adaptive Aspect Ratio) */}
                 <div className={`relative w-full rounded-xl overflow-hidden ${item.aspectRatio} ${item.imageUrl ? 'bg-gray-100' : (item.imagePlaceholderColor || 'bg-brand-green')} flex flex-col items-center justify-center text-white`}>
@@ -265,7 +290,7 @@ export default function GaleriClient({ dbGaleri }: GaleriClientProps) {
                     {item.description}
                   </p>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         ) : (
@@ -283,10 +308,16 @@ export default function GaleriClient({ dbGaleri }: GaleriClientProps) {
 
       {/* 4. LIGHTBOX MODAL (MODAL INTERAKTIF OVERLAY) */}
       {activeImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 animate-fade-in backdrop-blur-xs">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 animate-fade-in backdrop-blur-xs"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="gallery-dialog-title"
+        >
           {/* Tombol Tutup Layar Penuh */}
           <button
-            onClick={() => setActiveImage(null)}
+            ref={closeButtonRef}
+            onClick={closeImage}
             className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-all border border-white/10 z-50"
             aria-label="Tutup"
           >
@@ -330,7 +361,7 @@ export default function GaleriClient({ dbGaleri }: GaleriClientProps) {
                   {activeImage.date}
                 </span>
               </div>
-              <h3 className="text-xl font-extrabold text-gray-800 leading-snug mb-3">
+              <h3 id="gallery-dialog-title" className="text-xl font-extrabold text-gray-800 leading-snug mb-3">
                 {activeImage.title}
               </h3>
               <p className="text-sm text-gray-600 leading-relaxed font-semibold">
