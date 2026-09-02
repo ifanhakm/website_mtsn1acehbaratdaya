@@ -90,15 +90,19 @@ export const getDocuments = unstable_cache(
 
 export const getStaff = unstable_cache(
   async () => {
-    const payload = await getPayload({ config })
-    const result = await payload.find({
-      collection: 'staf',
-      limit: 100,
-      depth: 0,
-    })
-    return result.docs
+    try {
+      const payload = await getPayload({ config })
+      const result = await payload.find({
+        collection: 'staf',
+        limit: 100,
+        depth: 0,
+      })
+      return result.docs
+    } catch {
+      return []
+    }
   },
-  ['staff-list-fast'],
+  ['staff-list-v6'],
   cacheOptions('staf'),
 )
 
